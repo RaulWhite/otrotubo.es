@@ -1,0 +1,42 @@
+<form action="submitVideo.php" method="POST" enctype="multipart/form-data">
+  <input type="file" id="video" name="video"><br>
+  <input type="submit" id="submit" disabled>
+</form>
+
+<div id="progresoSubida" style="display: none">
+  Progreso de subida: <span class="percent">0%</span>
+  <br><br>
+</div>
+
+<div id="respuesta"></div>
+<script>
+$(function() {
+  var percent = $('.percent');
+  var respuesta = $('#respuesta');
+
+  $("#video").bind("change", function(){
+    if(this.files[0].size > 2048000000){ // Si el archivo pesa más de 2GB
+      respuesta.html("El archivo es demasiado grande (Máximo admitido: 2GB)"); // Se avisa
+      $("#submit").disable(); // Se deshabilita el botón
+    } else { // Sino
+      respuesta.empty(); // Se vacía el mensaje de aviso
+      $("#submit").enable(); // Se habilita el botón
+    }
+  });
+
+  $('form').ajaxForm({
+    beforeSend: function() { // Antes de subir
+      var percentVal = '0%'; // Porcentaje a 0
+      percent.html(percentVal);
+      $("#progresoSubida").show(); // Mostrar proceso de subida
+    },
+    uploadProgress: function(event, position, total, percentComplete) { // Mientras se sube
+      var percentVal = percentComplete + '%'; // Actualizar porcentaje
+      percent.html(percentVal);
+    },
+    complete: function(xhr) { // Al completar la subida
+      respuesta.html(xhr.responseText); // Se muestra la salida del PHP destinatario del formulario
+    }
+  });
+}); 
+</script>
