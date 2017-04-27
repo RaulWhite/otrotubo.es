@@ -6,4 +6,4 @@ ffmpeg \
 -threads 2 \
 -r "$3" \
 "/var/www/html/otrotubo/videos/720/$2.mp4" \
-2> "/var/www/html/otrotubo/videos/tmp/log/$2.log"
+2> "/var/www/html/otrotubo/videos/log/$2.log"

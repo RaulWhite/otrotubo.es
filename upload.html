@@ -15,7 +15,7 @@ $(function() {
   var respuesta = $('#respuesta');
 
   $("#video").bind("change", function(){
-    if(this.files[0].size > 2048000000){ // Si el archivo pesa más de 2GB
+    if(this.files[0] !== undefined && this.files[0].size > 2147483648){ // Si el archivo pesa más de 2GB (valor en bytes; 1024 bytes por KB, etc)
       respuesta.html("El archivo es demasiado grande (Máximo admitido: 2GB)"); // Se avisa
       $("#submit").disable(); // Se deshabilita el botón
     } else { // Sino
