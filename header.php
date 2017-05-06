@@ -10,7 +10,7 @@
       <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 
       <!-- JQuery Form -->
-      <script src="http://malsup.github.com/min/jquery.form.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.form/4.2.1/jquery.form.min.js" integrity="sha384-tIwI8+qJdZBtYYCKwRkjxBGQVZS3gGozr3CtI+5JF/oL1JmPEHzCEnIKbDbLTCer" crossorigin="anonymous"></script>
       
       <!-- Bootstrap CDN -->
       <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
@@ -20,11 +20,9 @@
       <!-- Font Awesome CDN -->
       <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous"></link>
 
-      <!-- Custom LESS -->
-      <link rel="stylesheet/less" href="/style.less">
-      
-      <!-- Less CDN -->
-      <script src="https://cdnjs.cloudflare.com/ajax/libs/less.js/2.7.2/less.min.js"></script>
+      <!-- Custom CSSs -->
+      <link rel="stylesheet" href="css/headerStyle.css">
+      <link rel="stylesheet" href="css/style.css">
 
       <title><?php echo isset($tituloHeader)?$tituloHeader." - ":"" ?>otrotubo.es</title>
     </head>

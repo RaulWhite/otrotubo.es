@@ -1,0 +1,38 @@
+/* Reproductor */
+
+#player {
+  box-sizing: content-box;
+}
+
+/* Modo normal */
+.normalVideo video {
+  height: 360px;
+}
+
+/* Modo cine (width: 100%) */
+.wideVideo {
+  background-color: #222;
+}
+
+.wideVideo video {
+  display: block;
+  width: 100%;
+  max-width: 1280px !important;
+  margin: 0 auto;
+}
+
+/* Si el vídeo en modo normal no cabe */
+@media (max-width: 640px) {
+  /* Se oculta el botón de modo cine (no tendría sentido) */
+  #wSelector {
+    display: none;
+  }
+
+  /* Se adapta el vídeo al ancho de la ventana */
+  .normalVideo video {
+    height: initial;
+    width: 100%;
+  }
+}
+
+/* FIN Reproductor */

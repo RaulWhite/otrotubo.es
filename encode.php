@@ -8,7 +8,7 @@ if(!isset($_POST["clean"]) && isset($_POST["tempVideo"]) && isset($_POST["resolu
   $logFile = $_SERVER['DOCUMENT_ROOT']."/videos/log/$videoID.log";
   if(is_file($logFile))
     unlink($logFile);
-  exec($_SERVER['DOCUMENT_ROOT']."/sh/codificar".$resolution."p.sh \"".$tempVideo."\" \"".$videoID."\" \"".$videoFPS."\"");
+  exec($_SERVER['DOCUMENT_ROOT']."/sh/codificar".$resolution."p.sh \"".$tempVideo."\" \"".$videoID."\" \"".$videoFPS."\" \"".$_SERVER['DOCUMENT_ROOT']."\"");
 }
 
 // Si se limpia

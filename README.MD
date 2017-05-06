@@ -9,6 +9,10 @@ Las únicas librerías que de momento he usado son:
     - Bootstrap
     - Less
 
+  - Para funcionamiento de la página
+    - https://github.com/jquery-form/form
+      (Usado para mostrar porcentaje del proceso de subida)
+
 ### Funcionamiento
 Esta aplicación web requiere de un servidor (a poder ser un linux basado en Debian), con el programa ffmpeg instalado para poder realizar la conversión de los vídeos.
 
