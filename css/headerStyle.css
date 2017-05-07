@@ -1,4 +1,37 @@
-/* Header */
+/* HEADER */
+
+/* Padding para header sticky */
+body {
+  padding-top: 70px;
+}
+
+/* Eliminar lineas extra de bloques en móvil */
+.navbar-form {
+  -webkit-box-shadow: none;
+  box-shadow: none;
+}
+
+/* Color del botón de iniciar sesión */
+.submitButton{
+  background: #db0000;
+  border-color: #db0000;
+}
+
+/* Login dropdown */
+.login-dropdown .dropdown-menu{
+  width: 250px;
+  padding: 8px;
+  background: #9d0000 !important;
+}
+
+/* Centrar elementos del menú en móvil */
+@media (max-width: 767px) {
+    .navbar-collapse .navbar-nav li a {
+      text-align: center;
+    }
+}
+
+/* Colores del header (autogenerado con TWBSColor) */
 .navbar-default {
   background: #db0000;
   border-color: #9d0000;
@@ -94,8 +127,4 @@
   }
 }
 
-/* Padding para header sticky */
-body {
-  padding-top: 70px;
-}
-/*  FIN Header */
+/*  FIN HEADER */

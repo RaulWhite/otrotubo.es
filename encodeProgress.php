@@ -7,13 +7,14 @@ if(isset($_POST["videoID"])){
     $logFile = implode("\n", $logFile);
 
     preg_match_all("/Duration: (.*?), start:/", $logFile, $durationArray);
-    $videoLengthString = end($durationArray[1]); // Obtener duración del vídeo (en formato hh:mm:ss.cc)
+    // Obtener duración del vídeo (en formato hh:mm:ss.cc)
+    $videoLengthString = end($durationArray[1]); 
 
     // Convertir el tiempo obtenido en segundps (decimal con centésimas)
     $videoLength = parseFfmpegTime($videoLengthString);
 
     // Obtener estado actual (última línea de tiempo de codificación de vídeo)
-    // ffmpeg imprime en todo momento la posición del vídeo en la que se encuentra
+    // ffmpeg imprime en todo momento la posición del vídeo por donde va
     preg_match_all("/time=(.*?) bitrate/", $logFile, $actualTimeArray);
     $actualTimeString = end($actualTimeArray[1]);
     $actualTime = parseFfmpegTime($actualTimeString);

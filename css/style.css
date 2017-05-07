@@ -1,3 +1,8 @@
+/* Arreglo sombras texto botones */
+.btn {
+  text-shadow: none;
+}
+
 /* Reproductor */
 
 #player {

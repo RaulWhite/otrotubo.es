@@ -15,27 +15,37 @@ $(function() {
   var respuesta = $('#respuesta');
 
   $("#video").bind("change", function(){
-    if(this.files[0] !== undefined && this.files[0].size > 2147483648){ // Si el archivo pesa más de 2GB (valor en bytes; 1024 bytes por KB, etc)
-      respuesta.html("El archivo es demasiado grande (Máximo admitido: 2GB)"); // Se avisa
-      $("#submit").disable(); // Se deshabilita el botón
+    // Si el archivo pesa más de 2GB (valor en bytes; 1024 bytes por KB, etc)
+    if(this.files[0] !== undefined && this.files[0].size > 2147483648){
+      // Se avisa y se deshabilita el botón
+      respuesta.html("El archivo es demasiado grande (Máximo admitido: 2GB)");
+      $("#submit").disable();
     } else { // Sino
-      respuesta.empty(); // Se vacía el mensaje de aviso
-      $("#submit").enable(); // Se habilita el botón
+      // Se vacía el mensaje de aviso y se habilita el botón
+      respuesta.empty(); 
+      $("#submit").enable();
     }
   });
 
   $('form').ajaxForm({
-    beforeSend: function() { // Antes de subir
-      var percentVal = '0%'; // Porcentaje a 0
+    // Antes de subir
+    beforeSend: function() { 
+      // Porcentaje a 0
+      var percentVal = '0%'; 
       percent.html(percentVal);
-      $("#progresoSubida").show(); // Mostrar proceso de subida
+      // Mostrar proceso de subida
+      $("#progresoSubida").show(); 
     },
-    uploadProgress: function(event, position, total, percentComplete) { // Mientras se sube
-      var percentVal = percentComplete + '%'; // Actualizar porcentaje
+    // Mientras se sube
+    uploadProgress: function(event, position, total, percentComplete) {
+      // Actualizar porcentaje
+      var percentVal = percentComplete + '%'; 
       percent.html(percentVal);
     },
-    complete: function(xhr) { // Al completar la subida
-      respuesta.html(xhr.responseText); // Se muestra la salida del PHP destinatario del formulario
+    // Al completar la subida
+    complete: function(xhr) { 
+      // Se muestra la salida del PHP destinatario del formulario
+      respuesta.html(xhr.responseText); 
     }
   });
 }); 

@@ -21,7 +21,7 @@ if (!isset($idVideo)){
       if(!pausado)
         $('#player')[0].play();
       $(this).text(function(i, text){
-          return text === "Cambiar a 720p" ? "Cambiar a 360p" : "Cambiar a 720p";
+        return text === "Cambiar a 720p" ? "Cambiar a 360p" : "Cambiar a 720p";
       })
       $(this).toggleClass("btn-danger btn-primary")
     })
@@ -39,11 +39,14 @@ if (!isset($idVideo)){
 <br>
 <div id="playerWrapper" class="normalVideo">
   <video id="player" controls>
-    <source label="360p" src=<?php echo "\"/videos/360/".$idVideo.".mp4\"" ?> type="video/mp4">
-    <source label="720p" src=<?php echo "\"/videos/720/".$idVideo.".mp4\"" ?> type="video/mp4">
+    <source label="360p"
+      src=<?php echo "\"/videos/360/".$idVideo.".mp4\"" ?>
+      type="video/mp4">
+    <source label="720p"
+      src=<?php echo "\"/videos/720/".$idVideo.".mp4\"" ?>
+      type="video/mp4">
     Your browser does not support HTML5 video.
   </video>
 </div>
-<?php ?>
   </body>
 </html>
