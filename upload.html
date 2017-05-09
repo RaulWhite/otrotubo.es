@@ -1,4 +1,4 @@
-<form action="submitVideo.php" method="POST" enctype="multipart/form-data">
+<form id="submitVideoForm" action="submitVideo.php" method="POST" enctype="multipart/form-data">
   <input type="file" id="video" name="video"><br>
   <input type="submit" id="submit" disabled>
 </form>
@@ -27,7 +27,7 @@ $(function() {
     }
   });
 
-  $('form').ajaxForm({
+  $('#submitVideoForm').ajaxForm({
     // Antes de subir
     beforeSend: function() { 
       // Porcentaje a 0

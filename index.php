@@ -2,8 +2,9 @@
 require_once($_SERVER['DOCUMENT_ROOT']."/header.php"); 
 getHeader("Inicio");
 
-// Incluir formulario de subida
-require_once("upload.html");
+// Incluir formulario de subida si se está logueado
+if(isset($_SESSION['isLoged']) && $_SESSION['isLoged'])
+  require_once("upload.html");
 ?>
 
   </body>

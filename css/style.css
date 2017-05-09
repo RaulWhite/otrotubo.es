@@ -23,6 +23,7 @@
   display: block;
   width: 100%;
   max-width: 1280px !important;
+  max-height: 720px !important;
   margin: 0 auto;
 }
 

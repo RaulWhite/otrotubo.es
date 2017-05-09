@@ -1,7 +1,11 @@
 <?php
-// Si se ha querido iniciar sesión, se llama al archivo que procesa el login
-if (isset($_POST['submitLogin']))
-  require_once("/login.php");
+// Clase usuario
+require_once($_SERVER["DOCUMENT_ROOT"]."/login/claseUsuario.php");
+session_start();
+
+// Si se ha querido iniciar o cerrar sesión, se llama al archivo que procesa el login
+if (isset($_POST['loginRequest']) || isset($_POST['logoutRequest']))
+  require_once($_SERVER["DOCUMENT_ROOT"]."/login/login.php");
 
 // Función para imprimir head de HTML (con title como parámetro)
 // y header de la página
@@ -85,36 +89,69 @@ function getHeader($tituloHeader){ ?>
               </div>
             </form>
             <ul class="nav navbar-nav navbar-right">
-              <li class="dropdown login-dropdown">
-                <a class="dropdown-toggle" data-toggle="dropdown" href="#">
-                  <i class="fa fa-user-circle-o"></i>
-                  &nbsp;Iniciar sesión
-                  <span class="caret"></span>
-                </a>
-                <ul class="dropdown-menu">
-                  <form>
-                    <div class="form-group">
-                      <input type="text" class="form-control"
-                      name="login" id="login" placeholder="Nick / Email">
-                    </div>
-                    <div class="form-group">
-                      <input type="text" class="form-control"
-                      name="pass" id="pass" placeholder="Contraseña">
-                    </div>
-                    <button type="submit"
-                    class="btn btn-default btn-danger btn-block submitButton"
-                    name="submitLogin" id="submitLogin">
-                      Iniciar sesión
-                    </button>
-                  </form>
-                </ul>
-              </li>
-              <li>
-                <a href="#">
-                  <span class="glyphicon glyphicon-register"></span>
-                  Registrarse
-                </a>
-              </li>
+              <?php if(isset($_SESSION['isLoged']) && $_SESSION['isLoged']){ // Si hay usuario logueado
+                $logedUser = $_SESSION['logedUser'] ?>
+                <li class="dropdown loged-dropdown">
+                  <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                    <?php if($logedUser->getAvatar() != null) { ?>
+                      <img class="userAvatar" 
+                      src=<?php echo "\"".$logedUser->getAvatar()."\"" ?>>
+                    <?php } ?>
+                    <?php echo $logedUser->getNick(); ?>
+                    <span class="caret"></span>
+                  </a>
+                  <ul class="dropdown-menu">
+                    <li><a href="/perfil">
+                      <button
+                      class="btn btn-default btn-danger btn-block profileDropButton">
+                        Mi perfil
+                      </button>
+                    </a></li>
+                    <li><a href="/myVideos">
+                      <button
+                      class="btn btn-default btn-danger btn-block profileDropButton">
+                        Mis vídeos
+                      </button>
+                    </a></li>
+                    <li><a>
+                      <form method="POST">
+                        <button type="submit"
+                        class="btn btn-default btn-danger btn-block profileDropButton"
+                        name="logoutRequest" id="logoutRequest">
+                          Cerrar sesión
+                        </button>
+                      </form>
+                    </a></li>
+                  </ul>
+                </li>
+                <li><a href="#">Subir vídeo</a></li>
+              <?php } else { // Si no hay usuario logueado ?>
+                <li class="dropdown login-dropdown">
+                  <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                    <i class="fa fa-user-circle-o"></i>
+                    &nbsp;Iniciar sesión
+                    <span class="caret"></span>
+                  </a>
+                  <ul class="dropdown-menu">
+                    <form method="POST">
+                      <div class="form-group">
+                        <input type="text" class="form-control"
+                        name="nick" id="nick" placeholder="Nick / Email" required>
+                      </div>
+                      <div class="form-group">
+                        <input type="password" class="form-control"
+                        name="pass" id="pass" placeholder="Contraseña" required>
+                      </div>
+                      <button type="submit"
+                      class="btn btn-default btn-danger btn-block submitButton"
+                      name="loginRequest" id="loginRequest">
+                        Iniciar sesión
+                      </button>
+                    </form>
+                  </ul>
+                </li>
+                <li><a href="#">Registrarse</a></li>
+              <?php } ?>
             </ul>
           </div>
         </div>

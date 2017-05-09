@@ -11,17 +11,17 @@ body {
   box-shadow: none;
 }
 
-/* Color del botón de iniciar sesión */
-.submitButton{
-  background: #db0000;
-  border-color: #db0000;
-}
-
-/* Login dropdown */
-.login-dropdown .dropdown-menu{
+/* Profile dropdown */
+.login-dropdown .dropdown-menu, .loged-dropdown .dropdown-menu{
   width: 250px;
   padding: 8px;
   background: #9d0000 !important;
+}
+
+/* Botones en profile dropdown */
+.profileDropButton{
+  background: #db0000;
+  border-color: #db0000;
 }
 
 /* Centrar elementos del menú en móvil */
