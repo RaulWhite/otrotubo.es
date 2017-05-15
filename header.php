@@ -41,6 +41,20 @@ function getHeader($tituloHeader){ ?>
       integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
       crossorigin="anonymous"></script>
       
+      <script>
+      $(document).ready(function(){
+        $('.navbar-nav li.dropdown').on('show.bs.dropdown', function() {
+          $(this).find('.dropdown-menu').first().stop(true, true).slideDown();
+        });
+        $('.navbar-nav .dropdown').on('hide.bs.dropdown', function(e) {
+          e.preventDefault();
+          $(this).find('.dropdown-menu').first().stop(true, true).slideUp('default', function(){
+            $('.navbar-nav li.dropdown').removeClass('open');
+          });
+        });
+      })
+      </script>
+      
       <!-- Font Awesome CDN -->
       <link rel="stylesheet" 
       href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
@@ -150,7 +164,7 @@ function getHeader($tituloHeader){ ?>
                     </form>
                   </ul>
                 </li>
-                <li><a href="#">Registrarse</a></li>
+                <li><a href="/register">Registrarse</a></li>
               <?php } ?>
             </ul>
           </div>

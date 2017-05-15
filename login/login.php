@@ -31,12 +31,13 @@ function login(){ // Función para hacer el login
     $bdCred['db']
   );
   $con->set_charset("utf8");
+  $nickParsed = $con->real_escape_string(trim($nick));
   $resu = $con->query(
     "SELECT `nick`, `pass` FROM `usuarios`
-    WHERE `nick` = '$nick'"
+    WHERE `nick` = '$nickParsed' OR `email` = '$nickParsed'"
   );
 
-  // Si la query no ha devuelto nada (no hay usuario con ese nick)
+  // Si la query no ha devuelto nada (no hay usuario con ese nick o email)
   if(!($fila = $resu->fetch_row())){
     $_SESSION['errorLogin'] = "<p>Usuario no encontrado</p>";
   // Si las contraseñas codificadas no coinciden
@@ -46,26 +47,18 @@ function login(){ // Función para hacer el login
   } else {
     $_SESSION['errorLogin'] = null;
     $_SESSION['isLoged'] = true;
-    setLogedUserObject($con);
+    setLogedUserObject($con, $nickParsed);
   }
   $con->close();
 }
 
 
-function setLogedUserObject($con){ // Función para crear el objeto de usuario
+function setLogedUserObject($con, $nickParsed){ // Función para crear el objeto de usuario
   if(!isset($_SESSION['logedUser'])){
-    /*global $bdCred;
-    $con = new mysqli(
-      "localhost",
-      $bdCred['dbuser'],
-      $bdCred['dbpass'],
-      $bdCred['db']
-    );*/
-    $con->set_charset("utf8");
     $resu = $con->query(
       "SELECT `nick`, `email`, `nombre`, `avatar`, `bio`, `fechaRegistro`, `tipo`
       FROM `usuarios`
-      WHERE `nick` = '".$_POST['nick']."'"
+      WHERE `nick` = '$nickParsed' OR email = '$nickParsed'"
     );
     if($fila = $resu->fetch_row()){
       $actual = new Usuario();
@@ -79,6 +72,5 @@ function setLogedUserObject($con){ // Función para crear el objeto de usuario
       $_SESSION['logedUser'] = $actual;
     }
   }
-  //$con->close();
 }
 ?>
