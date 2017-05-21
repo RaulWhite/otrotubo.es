@@ -40,6 +40,7 @@ function getHeader($tituloHeader){ ?>
       src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"
       integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
       crossorigin="anonymous"></script>
+      <script src='https://www.google.com/recaptcha/api.js'></script>
       
       <script>
       $(document).ready(function(){
@@ -62,8 +63,8 @@ function getHeader($tituloHeader){ ?>
       crossorigin="anonymous">
 
       <!-- Custom CSSs -->
-      <link rel="stylesheet" href="css/headerStyle.css">
-      <link rel="stylesheet" href="css/style.css">
+      <link rel="stylesheet" href="/css/headerStyle.css">
+      <link rel="stylesheet" href="/css/style.css">
       
       <?php
       // Título de la página proporcionado por el parámetro de la función,

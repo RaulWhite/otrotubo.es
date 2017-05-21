@@ -10,53 +10,28 @@ if(isset($_SESSION['isLoged']) && $_SESSION['isLoged']){ ?>
     <a href="/">Volver al inicio</a>
   </noscript>
   <?php die();
-} ?>
+} 
 
-<script>
-  $(document).ready(function(){
-    // Cada vez que se selecciona un archivo en el formulario
-    $("#avatar").change(function(){
-      var formData = new FormData();
-      // Archivo del input "avatar"
-      $(".alert").remove();
-      $(".tmpAvatar").attr("src", "");
-      $(".tmpAvatar").hide();
-      $.each($("#avatar")[0].files, function(i, file){
-        formData.append("file"+i, file);
-      });
-      $.ajax({
-        url: "/register/uploadAvatar.php",
-        type: "post",
-        dataType: "json",
-        data: formData,
-        cache: false,
-        contentType: false,
-        processData: false,
-        success: function(json){
-          // Si ha pasado los tests en el PHP, se muestra la imagen
-          if(json.checkSuccess){
-            console.log(json);
-            $(".tmpAvatar").attr("src", json.tmpImgPath);
-            $(".tmpAvatar").show();
-            $("#registerForm").append(
-              "<input type='hidden' name='tmpAvatarPath' id='tmpAvatarPath'" +
-              "value=" + json.tmpImgPath);
-          // Sino, se muestra el mensaje de error como alert de bootstrap
-          } else {
-            $("input#avatar").closest(".form-group").append(
-              "<div class='alert alert-danger' style='display:none'>" +
-                "<strong>Error </strong>" + json.message +
-              "</div>"
-            );
-            $(".alert").slideDown();
-            setTimeout(function(){
-              $(".alert").slideUp();
-            }, 5000);
-          }
-        }
-      });
-    })
-  });
+// Si hay una petición POST del reCaptcha, cargar la clave secreta
+if(isset($_POST["g-recaptcha-response"])){
+  $gReSecret =
+    parse_ini_file(
+      dirname($_SERVER['DOCUMENT_ROOT'])."/g-recaptcha-secret.ini")['secret'];
+  require_once($_SERVER['DOCUMENT_ROOT'].'/lib/recaptcha/src/autoload.php');
+  echo $gReSecret;
+  $recaptcha = new \ReCaptcha\ReCaptcha($gReSecret);
+  $gReResp =
+    $recaptcha->verify($_POST['g-recaptcha-response'], $_SERVER['REMOTE_ADDR']);
+
+  $passedCaptcha = $gReResp->isSuccess();
+}
+
+?>
+
+<script src="/register/codeForm.js"></script>
+<!-- Script para calcular md5 con JS -->
+<script
+src="/lib/jquery.md5.js">
 </script>
 
 <div class="container">
@@ -105,14 +80,29 @@ name="registerForm" id="registerForm">
       </div>
     </div>
     <div class="row">
-      <div class="col-sm-6 col-xs-12">
+      <div class="col-sm-6 col-xs-12 imgBlock">
         <div class="form-group">
           <label for="avatar">Avatar:</label>
-          <label class="btn btn-default btn-sm">
-            Seleccionar
-            <input type="file" id="avatar" name="avatar" style="display:none">
-          </label>
-          <br><br>
+          <div class="input-group">
+            <label class="input-group-btn">
+              <span class="btn btn-primary">
+                  Seleccionar
+                  <input type="file"
+                  id="avatar" name="avatar" style="display:none">
+              </span>
+            </label>
+            <input type="text" class="form-control"
+            id="tmpFileName" name="tmpFileName"
+            value="Ningún archivo seleccionado" disabled>
+          </div>
+          <div class="alert" id="alertIMG" style="display:none"></div>
+          <button id="useGravatar"
+          class="btn btn-default btn-info" style="display:none">
+            Usar avatar de <strong>Gravatar</strong>
+          </button>
+          <div class="imgProcessing" style="display: none">
+            <i class="fa fa-refresh fa-5x imgProcessing"></i>
+          </div>
           <img class="text-center tmpAvatar img-responsive" style="display:none">
         </div>
       </div>
@@ -121,12 +111,17 @@ name="registerForm" id="registerForm">
           <label for="bio">Descripción:</label>
           <textarea class="form-control" rows="5"
           id="bio" name="bio" placeholder="Descripción"></textarea>
-        </div>
-        <br>
-        <div class="text-right">
-          <button type="submit" class="btn btn-default btn-danger btn-lg">
-            Registrarse
-          </button>
+          <br>
+          <label for="recaptcha">Captcha:</label>
+          <div class="g-recaptcha" id="recaptcha"
+          data-sitekey="6LdjTSIUAAAAADZmrDjz1X6UayHpg5-OAikK2WIr">
+          </div>
+          <br>
+          <div class="text-right">
+            <button type="submit" class="btn btn-default btn-danger btn-lg">
+              Registrarse
+            </button>
+          </div>
         </div>
       </div>
     </div>

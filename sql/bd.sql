@@ -7,7 +7,8 @@ CREATE TABLE IF NOT EXISTS `otrotubo`.`usuarios` (
   `pass` VARCHAR(100) NOT NULL,
   `email` VARCHAR(80) NOT NULL,
   `nombre` VARCHAR(80) NULL,
-  `avatar` VARCHAR(45) NULL,
+  `gravatar` BOOLEAN NOT NULL,
+  `avatar` VARCHAR(45) NOT NULL,
   `bio` TEXT NULL,
   `fechaRegistro` DATE NOT NULL,
   `tipo` INT NOT NULL DEFAULT 1,
@@ -54,7 +55,7 @@ ENGINE = InnoDB;
 CREATE TABLE IF NOT EXISTS `otrotubo`.`likes` (
   `usuarios_nick` VARCHAR(30) NOT NULL,
   `videos_idVideo` VARCHAR(8) NOT NULL,
-  `like` TINYINT(1) NOT NULL,
+  `gusto` BOOLEAN NOT NULL,
   PRIMARY KEY (`usuarios_nick`, `videos_idVideo`),
   INDEX `fk_usuarios_has_videos_videos1_idx` (`videos_idVideo` ASC),
   INDEX `fk_usuarios_has_videos_usuarios1_idx` (`usuarios_nick` ASC),

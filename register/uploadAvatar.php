@@ -2,23 +2,45 @@
 $image = $_FILES['file0'];
 // Si se ha subido un archivo, y es una imagen
 if(is_uploaded_file($image['tmp_name'])
-  && getimagesize($image['tmp_name']) !== false){
-  // Nombre temporal con número aleatorio
-  $newTempImg = "/avatars/tmp/".rand(0, 99999).$image['name'];
+  && ($imgSize = getimagesize($image['tmp_name'])) !== false){
+  // Ruta de imagen temporal con nombre original y número aleatorio
+  $newTempImg = $_SERVER["DOCUMENT_ROOT"]
+    ."/avatars/tmp/".rand(0, 99999)."_".$image['name'];
   // Si no existe la carpeta de avatares temporales, se crea
   if(!is_dir($_SERVER["DOCUMENT_ROOT"]."/avatars/tmp"))
     mkdir($_SERVER["DOCUMENT_ROOT"]."/avatars/tmp", 0755);
   // Se mueve el archivo al directorio temporal
-  move_uploaded_file($image['tmp_name'], 
-    $_SERVER["DOCUMENT_ROOT"].$newTempImg);
-  // Redimensionar a 500x500
-  $imagisk = new \Imagick(realpath($_SERVER["DOCUMENT_ROOT"].$newTempImg));
-  $imagisk->scaleImage(500,500,true);
-  $imagisk->writeImage($_SERVER["DOCUMENT_ROOT"].$newTempImg);
-  // Se envía la ruta
+  move_uploaded_file($image['tmp_name'], $newTempImg);
+  // Redimensionar a 500x500 si es más grande
+  if($imgSize[0] > 500 || $imgSize[1] > 500){
+    $imagick = new \Imagick(realpath($newTempImg));
+    // Si no es gif, escala la imagen
+    if(!isImageAnimated($newTempImg)){
+      $imagick->scaleImage(500,500,true);
+      $imagick->writeImage($newTempImg);
+    // Si es gif, escala lso cuadros por separado y los vuelve a unir
+    } else {
+      $imagick = $imagick->coalesceImages();
+      foreach ($imagick as $frame) { 
+        $frame->scaleImage(500,500,true);
+      }
+      $imagick = $imagick->deconstructImages();
+      $imagick->writeImages($newTempImg, true);
+    }
+  }
+  // Convertir a base64
+  $extension = pathinfo(
+    $newTempImg,PATHINFO_EXTENSION);
+  $imgData = file_get_contents(
+    $newTempImg,PATHINFO_EXTENSION);
+  $newTempImgB64 = 'data:image/'.$extension
+    .';base64,'.base64_encode($imgData);
+  // Borrar imagen temporal
+  unlink($newTempImg);
+  // Se envía la imagen en base64
   echo json_encode(array(
     "checkSuccess" => true,
-    "tmpImgPath" => $newTempImg
+    "tmpImgPath" => $newTempImgB64
   ));
 // Si se ha subido un archivo, pero no es una imagen  
 } else if(is_uploaded_file($image['tmp_name'])
@@ -31,22 +53,20 @@ if(is_uploaded_file($image['tmp_name'])
 } else if (!is_uploaded_file($image['tmp_name'])){
   echo json_encode(array(
     "checkSuccess" => false,
-    "message" => "Error en el proceso de subida"
+    "message" => "Algo ha ido mal en el proceso de subida"
   ));
 }
 
-// Borrar archivos temporales que llevan más de 1 minuto
-if(is_dir($_SERVER['DOCUMENT_ROOT']."/avatars/tmp")){
-  $dir = $_SERVER['DOCUMENT_ROOT']."/avatars/tmp";
-  $directory = opendir($dir);
-  // Mientras hay archivos pendientes de revisar en la carpeta
-  while(false !== ($actual = readdir($directory))){
-    // Si han pasado más de 1 minuto la creación del archivo, se elimina
-    if($actual != "." && $actual != ".."
-    && time() - filectime($dir."/".$actual) > 60){
-      unlink($dir."/".$actual);
+// Función para comprobar si es una imagen animada (GIF o similar)
+function isImageAnimated($file){
+  $nb_image_frame = 0;
+  $image = new Imagick($file);
+  foreach($image->deconstructImages() as $i) {
+    $nb_image_frame++;
+    if ($nb_image_frame > 1) {
+      return true;
     }
   }
+  return false;
 }
-
 ?>
