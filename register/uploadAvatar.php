@@ -1,8 +1,10 @@
 <?php
 $image = $_FILES['file0'];
-// Si se ha subido un archivo, y es una imagen
+// Si se ha subido un archivo, y es una imagen (no SVG) de 20MB o menos
 if(is_uploaded_file($image['tmp_name'])
-  && ($imgSize = getimagesize($image['tmp_name'])) !== false){
+  && (strstr(mime_content_type($image['tmp_name']), "image/"))
+  && !(strstr(mime_content_type($image['tmp_name']), "svg"))
+  && filesize($image['tmp_name']) <= 20971520){
   // Ruta de imagen temporal con nombre original y número aleatorio
   $newTempImg = $_SERVER["DOCUMENT_ROOT"]
     ."/avatars/tmp/".rand(0, 99999)."_".$image['name'];
@@ -11,6 +13,8 @@ if(is_uploaded_file($image['tmp_name'])
     mkdir($_SERVER["DOCUMENT_ROOT"]."/avatars/tmp", 0755);
   // Se mueve el archivo al directorio temporal
   move_uploaded_file($image['tmp_name'], $newTempImg);
+  // Tamaño de la imagen
+  $imgSize = getimagesize($newTempImg);
   // Redimensionar a 500x500 si es más grande
   if($imgSize[0] > 500 || $imgSize[1] > 500){
     $imagick = new \Imagick(realpath($newTempImg));
@@ -42,10 +46,26 @@ if(is_uploaded_file($image['tmp_name'])
     "checkSuccess" => true,
     "tmpImgPath" => $newTempImgB64
   ));
-// Si se ha subido un archivo, pero no es una imagen  
-} else if(is_uploaded_file($image['tmp_name'])
-  && getimagesize($image['tmp_name']) === false){
-    echo json_encode(array(
+// Si se ha subido un archivo de más de 20MB
+} else if((($imageSize = filesize($image['tmp_name'])) > 20971520)
+  || (isset($_POST["tooLarge"]) && $_POST["tooLarge"] 
+    && $imageSize = $_POST["imageSize"])){
+  echo json_encode(array(
+    "checkSuccess" => false,
+    "message" => "El archivo subido es de más de 20MB "
+      ."(".rtrim(human_filesize($imageSize), "B")."B)"
+  ));
+// Si se ha subido un archivo, y es una imagen SVG
+} else if(strstr(mime_content_type($image['tmp_name']), "svg")){
+  echo json_encode(array(
+    "checkSuccess" => false,
+    "message" => "Lo sentimos. Archivos de tipo SVG no están soportados"
+  ));
+// Si se ha subido un archivo, pero no es una imagen
+} else if((is_uploaded_file($image['tmp_name'])
+    && !strstr(mime_content_type($image['tmp_name']), "image/"))
+  || (isset($_POST["notImage"]) && $_POST["notImage"])){
+  echo json_encode(array(
     "checkSuccess" => false,
     "message" => "El archivo subido no es una imagen"
   ));
@@ -68,5 +88,12 @@ function isImageAnimated($file){
     }
   }
   return false;
+}
+
+// Función para pasar el tamaño del archivo a "humano"
+function human_filesize($bytes, $decimals = 2) {
+  $sz = 'BKMGTP';
+  $factor = floor((strlen($bytes) - 1) / 3);
+  return sprintf("%.{$decimals}f", $bytes / pow(1024, $factor)) . @$sz[$factor];
 }
 ?>

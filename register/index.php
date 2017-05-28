@@ -18,7 +18,6 @@ if(isset($_POST["g-recaptcha-response"])){
     parse_ini_file(
       dirname($_SERVER['DOCUMENT_ROOT'])."/g-recaptcha-secret.ini")['secret'];
   require_once($_SERVER['DOCUMENT_ROOT'].'/lib/recaptcha/src/autoload.php');
-  echo $gReSecret;
   $recaptcha = new \ReCaptcha\ReCaptcha($gReSecret);
   $gReResp =
     $recaptcha->verify($_POST['g-recaptcha-response'], $_SERVER['REMOTE_ADDR']);
@@ -82,12 +81,14 @@ name="registerForm" id="registerForm">
     <div class="row">
       <div class="col-sm-6 col-xs-12 imgBlock">
         <div class="form-group">
-          <label for="avatar">Avatar:</label>
+          <label for="avatar">
+            Avatar: <span class="text-danger">(Máximo 20MB)</span>
+          </label>
           <div class="input-group">
             <label class="input-group-btn">
               <span class="btn btn-primary">
                   Seleccionar
-                  <input type="file"
+                  <input type="file" accept="image/*"
                   id="avatar" name="avatar" style="display:none">
               </span>
             </label>

@@ -8,7 +8,7 @@ $(document).ready(function(){
     clearTimeout(alertHideTOut);
     $("#alertIMG").slideUp();
     // Se muestra el nombre de la imagen o que no hay nada seleccionado
-    $("#tmpFileName").val($(this).val() ?
+    $("#tmpFileName").val(($(this).val() !== "") ?
       $(this).val().replace(/\\/g, '/').replace(/.*\//, '')
       : "Ningún archivo seleccionado");
     var formData = new FormData();
@@ -19,11 +19,18 @@ $(document).ready(function(){
     // se intenta usar Gravatar
     if(!$("#avatar").get(0).files.length)
       $("#email").change();
-    // Si se ha subido archivo
+    // Si hay archivo seleccionado
     if($("#avatar").get(0).files.length){
-      $.each($("#avatar")[0].files, function(i, file){
-        formData.append("file"+i, file);
-      });
+      // Si es de más de 20 MB
+      if ($("#avatar")[0].files[0].size > 20971520){
+        formData.append("tooLarge", true);
+        formData.append("imageSize", $("#avatar")[0].files[0].size);
+      // Si no es una imagen
+      } else if($("#avatar")[0].files[0].type.indexOf("image") == -1)
+        formData.append("notImage", true);
+      // Si es una imagen de 20MB o menos
+      else
+        formData.append("file0", $("#avatar")[0].files[0]);
       // Mostrar animación de carga
       $(".imgProcessing").slideDown();
       $.ajax({
@@ -42,6 +49,7 @@ $(document).ready(function(){
           // Sino, se muestra el mensaje de error como alert de bootstrap
           } else {
             $("#avatar").val("");
+            $("#tmpFileName").val("Ningún archivo seleccionado");
             $("#alertIMG").html("<strong>ERROR: </strong>" + json.message);
             $("#alertIMG").removeClass("alert-info");
             $("#alertIMG").addClass("alert-danger");
@@ -53,6 +61,7 @@ $(document).ready(function(){
         },
         error: function(){
           $("#avatar").val("");
+          $("#tmpFileName").val("Ningún archivo seleccionado");
           $("#alertIMG").html("<strong>Error desconocido</strong>");
           $("#alertIMG").removeClass("alert-info");
           $("#alertIMG").addClass("alert-danger");
@@ -87,7 +96,9 @@ $(document).ready(function(){
       $("#useGravatar").slideUp();
       $("#alertIMG").slideUp();
       $("#avatar").val("");
-      $("#avatar").change();
+      $(".tmpAvatar").hide();
+      clearTimeout(alertHideTOut);
+      $("#alertIMG").slideUp();
     }
   });
 
