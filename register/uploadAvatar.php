@@ -1,10 +1,10 @@
 <?php
 $image = $_FILES['file0'];
-// Si se ha subido un archivo, y es una imagen (no SVG) de 20MB o menos
+// Si se ha subido un archivo, y es una imagen (no SVG) de 2MB o menos
 if(is_uploaded_file($image['tmp_name'])
   && (strstr(mime_content_type($image['tmp_name']), "image/"))
   && !(strstr(mime_content_type($image['tmp_name']), "svg"))
-  && filesize($image['tmp_name']) <= 20971520){
+  && filesize($image['tmp_name']) <= 2097152){
   // Ruta de imagen temporal con nombre original y número aleatorio
   $newTempImg = $_SERVER["DOCUMENT_ROOT"]
     ."/avatars/tmp/".rand(0, 99999)."_".$image['name'];
@@ -16,21 +16,28 @@ if(is_uploaded_file($image['tmp_name'])
   // Tamaño de la imagen
   $imgSize = getimagesize($newTempImg);
   // Redimensionar a 500x500 si es más grande
-  if($imgSize[0] > 500 || $imgSize[1] > 500){
-    $imagick = new \Imagick(realpath($newTempImg));
-    // Si no es gif, escala la imagen
-    if(!isImageAnimated($newTempImg)){
-      $imagick->scaleImage(500,500,true);
-      $imagick->writeImage($newTempImg);
-    // Si es gif, escala lso cuadros por separado y los vuelve a unir
-    } else {
-      $imagick = $imagick->coalesceImages();
-      foreach ($imagick as $frame) { 
-        $frame->scaleImage(500,500,true);
-      }
-      $imagick = $imagick->deconstructImages();
-      $imagick->writeImages($newTempImg, true);
+  $original = new \Imagick(realpath($newTempImg));
+  $imagick = new \Imagick();
+  // Si no es gif, escala la imagen
+  if(!isImageAnimated($newTempImg)){
+    $imagick->newImage($imgSize[0], $imgSize[1], "white");
+    $imagick->compositeImage($original, Imagick::COMPOSITE_OVER, 0, 0);
+    $imagick->setImageFormat("jpg");
+    if($imgSize[0] > 500 || $imgSize[1] > 500)
+      $imagick->resizeImage(500,500,25,1,true);
+    $imagick->setImageCompression(Imagick::COMPRESSION_JPEG); 
+    $imagick->setImageCompressionQuality(55);
+    unlink($newTempImg);
+    $newTempImg.=".jpg";
+    $imagick->writeImage($newTempImg);
+  // Si es gif, escala los cuadros por separado y los vuelve a unir
+  } else {
+    $imagick = $original->coalesceImages();
+    foreach ($imagick as $frame) { 
+      $frame->scaleImage(500,500,true);
     }
+    $imagick = $imagick->deconstructImages();
+    $imagick->writeImages($newTempImg, true);
   }
   // Convertir a base64
   $extension = pathinfo(
@@ -46,13 +53,13 @@ if(is_uploaded_file($image['tmp_name'])
     "checkSuccess" => true,
     "tmpImgPath" => $newTempImgB64
   ));
-// Si se ha subido un archivo de más de 20MB
-} else if((($imageSize = filesize($image['tmp_name'])) > 20971520)
+// Si se ha subido un archivo de más de 2MB
+} else if((($imageSize = filesize($image['tmp_name'])) > 2097152)
   || (isset($_POST["tooLarge"]) && $_POST["tooLarge"] 
     && $imageSize = $_POST["imageSize"])){
   echo json_encode(array(
     "checkSuccess" => false,
-    "message" => "El archivo subido es de más de 20MB "
+    "message" => "El archivo subido es de más de 2MB "
       ."(".rtrim(human_filesize($imageSize), "B")."B)"
   ));
 // Si se ha subido un archivo, y es una imagen SVG

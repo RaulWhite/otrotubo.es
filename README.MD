@@ -15,6 +15,8 @@ Las únicas librerías que de momento he usado son:
       - Usado para calcular el MD5 del correo con JavaScript/jQuery
     - reCaptcha PHP client library (https://github.com/google/recaptcha)
       - Usado para implementar comprobación de captcha en PHP
+    - Browser-Update.org (https://browser-update.org/)
+      - Usado para comprobar que se use un navegador actualizado que soporte todos los elementos que usa esta página
 
 ### Funcionamiento
 Esta aplicación web requiere de un servidor (a poder ser un linux basado en Debian), con el programa ffmpeg instalado para poder realizar la conversión de los vídeos.

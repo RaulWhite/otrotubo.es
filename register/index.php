@@ -2,7 +2,7 @@
 require_once($_SERVER['DOCUMENT_ROOT']."/header.php"); 
 getHeader("Registro");
 
-// Si ya está logueado, volver al inicio
+// Si ya está logueado, volver al inicio. Redirección por JS
 if(isset($_SESSION['isLoged']) && $_SESSION['isLoged']){ ?>
   <script>window.location.replace("/");</script>
   <noscript>
@@ -22,112 +22,56 @@ if(isset($_POST["g-recaptcha-response"])){
   $gReResp =
     $recaptcha->verify($_POST['g-recaptcha-response'], $_SERVER['REMOTE_ADDR']);
 
+  // Respuesta de comprobación del Captcha
   $passedCaptcha = $gReResp->isSuccess();
 }
 
+// Si se ha enviado el formulario para registrarse, hacer el registro
+if(isset($_POST["registrarse"]) && $passedCaptcha){
+  require_once($_SERVER['DOCUMENT_ROOT']."/login/claseUsuario.php");
+
+  $tmpUser = new Usuario();
+  $tmpUser->setNick(trim($_POST["nick"]));
+  $tmpUser->setNombre(trim($_POST["name"]));
+  $tmpUser->setEmail(trim($_POST["email"]));
+  $tmpUser->setBio((trim($_POST["bio"]) != "")?trim($_POST["bio"]):null); 
+  $tmpUser->setFechaReg(date("Y-m-d"));
+  $tmpUser->setTipo("registered");
+
+  if(isset($_POST["avatarBase64"])
+  && isset($_POST["usingGravatar"])
+  && $_POST["usingGravatar"] == "false"){
+    $tmpUser->setAvatar(base64_decode($_POST["avatarBase64"]));
+  }
+
+  // Archivo ini con las credenciales para acceder a la BD.
+  // Se encuentra en la carpeta superior a la raíz de la página.
+  $bdCred = parse_ini_file(dirname($_SERVER['DOCUMENT_ROOT'])."/mysqlcon.ini");
+  $con = new mysqli(
+    "localhost",
+    $bdCred['dbuser'],
+    $bdCred['dbpass'],
+    $bdCred['db']
+  );
+  $con->set_charset("utf8");
+  $con->query("INSERT INTO `usuarios`"
+    ."(`nick`, `pass`, `email`, `nombre`, `avatar`, `bio`, `fechaRegistro`, `tipo`)"
+    ."VALUES('"
+    .$con->real_escape_string($tmpUser->getNick())."', '"
+    .$con->real_escape_string(password_hash($_POST['pass'], PASSWORD_DEFAULT))."', '"
+    .$con->real_escape_string($tmpUser->getEmail())."', "
+    .($tmpUser->getNombre()!=""?("'".$con->real_escape_string($tmpUser->getNombre())."'"):"NULL").", "
+    .($tmpUser->getAvatar()!=""?("'".$con->real_escape_string($tmpUser->getAvatar())."'"):"NULL").", "
+    .($tmpUser->getBio()!=""?("'".$con->real_escape_string($tmpUser->getBio())."'"):"NULL").", '"
+    .$con->real_escape_string($tmpUser->getFechaReg())."', '"
+    .$con->real_escape_string($tmpUser->getTipo())."')");
+  $con->close();
+}
+
+printForm();
+
+// Imprimir formulario de registro, con librerías JS
+function printForm(){
+  require_once("registerForm.html");
+}
 ?>
-
-<script src="/register/codeForm.js"></script>
-<!-- Script para calcular md5 con JS -->
-<script
-src="/lib/jquery.md5.js">
-</script>
-
-<div class="container">
-  <div class="row">
-    <div class="col-xs-12">
-      <h2 class="registerTitle text-center">
-        Regístrate en <span class="label label-danger">otrotubo.es</span>
-      </h2>
-    </div>
-  </div>
-</div>
-<hr>
-<form method="POST" enctype="multipart/form-data"
-name="registerForm" id="registerForm">
-  <div class="container">
-    <div class="row">
-      <div class="col-sm-6 col-xs-12">
-        <div class="form-group">
-          <label for="nick">Nick:</label>
-          <input type="text" class="form-control"
-          id="nick" name="nick" placeholder="Nick">
-        </div>
-      </div>
-      <div class="col-sm-6 col-xs-12">
-        <div class="form-group">
-          <label for="email">Email:</label>
-          <input type="email" class="form-control"
-          id="email" name="email" placeholder="Email">
-        </div>
-      </div>
-    </div>
-    <div class="row">
-      <div class="col-sm-6 col-xs-12">
-        <div class="form-group">
-          <label for="pass">Contraseña:</label>
-          <input type="password" class="form-control"
-          id="pass" name="pass" placeholder="Contraseña">
-        </div>
-      </div>
-      <div class="col-sm-6 col-xs-12">
-        <div class="form-group">
-          <label for="passRepeat">Repetir contraseña:</label>
-          <input type="password" class="form-control"
-          id="passRepeat" name="passRepeat" placeholder="Repetir contraseña">
-        </div>
-      </div>
-    </div>
-    <div class="row">
-      <div class="col-sm-6 col-xs-12 imgBlock">
-        <div class="form-group">
-          <label for="avatar">
-            Avatar: <span class="text-danger">(Máximo 20MB)</span>
-          </label>
-          <div class="input-group">
-            <label class="input-group-btn">
-              <span class="btn btn-primary">
-                  Seleccionar
-                  <input type="file" accept="image/*"
-                  id="avatar" name="avatar" style="display:none">
-              </span>
-            </label>
-            <input type="text" class="form-control"
-            id="tmpFileName" name="tmpFileName"
-            value="Ningún archivo seleccionado" disabled>
-          </div>
-          <div class="alert" id="alertIMG" style="display:none"></div>
-          <button id="useGravatar"
-          class="btn btn-default btn-info" style="display:none">
-            Usar avatar de <strong>Gravatar</strong>
-          </button>
-          <div class="imgProcessing" style="display: none">
-            <i class="fa fa-refresh fa-5x imgProcessing"></i>
-          </div>
-          <img class="text-center tmpAvatar img-responsive" style="display:none">
-        </div>
-      </div>
-      <div class="col-sm-6 col-xs-12">
-        <div class="form-group">
-          <label for="bio">Descripción:</label>
-          <textarea class="form-control" rows="5"
-          id="bio" name="bio" placeholder="Descripción"></textarea>
-          <br>
-          <label for="recaptcha">Captcha:</label>
-          <div class="g-recaptcha" id="recaptcha"
-          data-sitekey="6LdjTSIUAAAAADZmrDjz1X6UayHpg5-OAikK2WIr">
-          </div>
-          <br>
-          <div class="text-right">
-            <button type="submit" class="btn btn-default btn-danger btn-lg">
-              Registrarse
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</form>
-
-  </body>
-</html>

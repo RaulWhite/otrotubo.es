@@ -8,10 +8,10 @@ CREATE TABLE IF NOT EXISTS `otrotubo`.`usuarios` (
   `email` VARCHAR(80) NOT NULL,
   `nombre` VARCHAR(80) NULL,
   `gravatar` BOOLEAN NOT NULL,
-  `avatar` VARCHAR(45) NOT NULL,
+  `avatar` MEDIUMBLOB NULL,
   `bio` TEXT NULL,
   `fechaRegistro` DATE NOT NULL,
-  `tipo` INT NOT NULL DEFAULT 1,
+  `tipo` VARCHAR(20) NOT NULL DEFAULT 'registered',
   PRIMARY KEY (`nick`))
 ENGINE = InnoDB;
 

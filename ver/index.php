@@ -45,7 +45,7 @@ if (!isset($idVideo)){
     <source label="720p"
       src=<?php echo "\"/videos/720/".$idVideo.".mp4\"" ?>
       type="video/mp4">
-    Your browser does not support HTML5 video.
+    Su navegador no soporta vídeo HTML5.
   </video>
 </div>
   </body>

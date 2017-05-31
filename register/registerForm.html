@@ -1,0 +1,144 @@
+<!-- JS para el tratamiento del avatar en el registro -->
+<script src="/register/avatarForm.js"></script>
+<!-- JS para comprobar que los datos de registro sean válidos -->
+<script src="/register/checkForm.js"></script>
+<!-- Script para calcular md5 con JS -->
+<script src="/lib/jquery.md5.js"></script>
+
+<div class="container">
+  <div class="row">
+    <div class="col-xs-12">
+      <h2 class="registerTitle text-center">
+        Regístrate en <span class="label label-danger">otrotubo.es</span><br>
+        <small>Los campos con * son obligatorios</small>
+      </h2>
+    </div>
+  </div>
+</div>
+<hr>
+<form method="POST" enctype="multipart/form-data"
+name="registerForm" id="registerForm">
+  <div class="container">
+    <div class="row">
+      <div class="col-sm-4 col-xs-12">
+        <div class="form-group">
+          <label for="nick">Nick: *</label>
+          <input type="text" class="form-control"
+          id="nick" name="nick" placeholder="Nick *" required>
+        </div>
+      </div>
+      <div class="col-sm-4 col-xs-12">
+        <div class="form-group">
+          <label for="nick">Nombre:</label>
+          <input type="text" class="form-control"
+          id="name" name="name" placeholder="Nombre">
+        </div>
+      </div>
+      <div class="col-sm-4 col-xs-12">
+        <div class="form-group">
+          <label for="email">Email: *</label>
+          <input type="email" class="form-control"
+          id="email" name="email" placeholder="Email *" required>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-sm-6 col-xs-12">
+        <div class="form-group">
+          <label for="pass">Contraseña: *</label>
+          <input type="password" class="form-control"
+          id="pass" name="pass" placeholder="Contraseña *" required>
+        </div>
+      </div>
+      <div class="col-sm-6 col-xs-12">
+        <div class="form-group">
+          <label for="passRepeat">Repetir contraseña: *</label>
+          <input type="password" class="form-control"
+          id="passRepeat" name="passRepeat"
+          placeholder="Repetir contraseña *" required>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-sm-6 col-xs-12 imgBlock">
+        <div class="form-group">
+          <label for="avatar">
+            Avatar: <span class="text-danger">(Máximo 2MB)</span>
+          </label>
+          <div class="input-group">
+            <label class="input-group-btn">
+              <span class="btn btn-primary">
+                  Seleccionar
+                  <input type="file" accept="image/*"
+                  id="avatar" name="avatar" style="display:none">
+              </span>
+            </label>
+            <input type="text" class="form-control"
+            id="tmpFileName" name="tmpFileName"
+            value="Ningún archivo seleccionado" disabled>
+          </div>
+          <div class="alert" id="alertIMG" style="display:none"></div>
+          <button id="useGravatar"
+          class="btn btn-default btn-info" style="display:none">
+            Usar avatar de <strong>Gravatar</strong>
+          </button>
+          <div class="imgProcessing" style="display: none">
+            <i class="fa fa-refresh fa-5x imgProcessing"></i>
+          </div>
+          <img class="text-center tmpAvatar img-responsive" style="display:none">
+        </div>
+      </div>
+      <div class="col-sm-6 col-xs-12">
+        <div class="form-group">
+          <label for="bio">Descripción:</label>
+          <textarea class="form-control" rows="5"
+          id="bio" name="bio" placeholder="Descripción"></textarea>
+          <br>
+        </div>
+        <div class="form-group">
+          <label for="recaptcha">Captcha: *</label>
+          <div class="g-recaptcha" id="recaptcha"
+          data-sitekey="6LdjTSIUAAAAADZmrDjz1X6UayHpg5-OAikK2WIr">
+          </div>
+        </div>
+        <br>
+        <div class="form-group">
+          <div class="text-right">
+            <button type="submit" id="registrarse" name="registrarse"
+            class="btn btn-default btn-danger btn-lg">
+              Registrarse
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</form>
+
+<!-- Modal requisitos contraseña -->
+<div id="passReq" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h3 class="modal-title">Requisitos para una contraseña segura</h3>
+      </div>
+      <div class="modal-body">
+        <h4>Debe ser de mínimo 8 caracteres y comenter al menos:</h4>
+        <ul>
+          <li>Una minúscula</li>
+          <li>Una mayúscula</li>
+          <li>Un número</li>
+          <li>Un caracter no alfanumérico (@, !, ", $, ., etc.)</li>
+        </ul>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default"
+        data-dismiss="modal">Cerrar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+  </body>
+</html>

@@ -13,9 +13,34 @@ function getHeader($tituloHeader){ ?>
   <!DOCTYPE html>
   <html lang="es">
     <head>
+      <!-- Si JS está desactivado, redirigir a página de advertencia -->
+      <noscript>
+        <meta http-equiv="refresh" content="0;url=/noScript">
+      </noscript>
       <meta charset="UTF-8">
       <meta name="viewport" content="width=device-width, user-scalable=no">
       <meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+      <!-- http://browser-update.org/ - Código JS para detectar navegadores desactualizados -->
+      <script> 
+        var $buoop = {
+          vs:{i:9,f:46,o:-8,s:7,c:48},
+          reminder:0,
+          reminderClosed:0,
+          mobile:false,
+          api:4,
+          noclose: false,
+          text:"Su navegador está desactualizado. "
+            + "Por favor, actualice para poder usar todas las funciones de esta página."
+        };
+        function $buo_f(){ 
+        var e = document.createElement("script"); 
+        e.src = "//browser-update.org/update.min.js"; 
+        document.body.appendChild(e);
+        };
+        try {document.addEventListener("DOMContentLoaded", $buo_f,false)}
+        catch(e){window.attachEvent("onload", $buo_f)}
+      </script>
 
       <!-- JQuery CDN -->
       <script
@@ -66,11 +91,52 @@ function getHeader($tituloHeader){ ?>
       <link rel="stylesheet" href="/css/headerStyle.css">
       <link rel="stylesheet" href="/css/style.css">
       
+      <!-- Banner de política de Cookies. Generado en cookieconsent.insites.com -->
+      <link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/cookieconsent2/3.0.3/cookieconsent.min.css" />
+      <script src="//cdnjs.cloudflare.com/ajax/libs/cookieconsent2/3.0.3/cookieconsent.min.js"></script>
+      <script>
+      window.addEventListener("load", function(){
+      window.cookieconsent.initialise({
+        "palette": {
+          "popup": {
+            "background": "#aa0000",
+            "text": "#ffdddd"
+          },
+          "button": {
+            "background": "#ff0000"
+          }
+        },
+        "theme": "edgeless",
+        "position": "bottom-right",
+        "content": {
+          "message": "Esta página web usa cookies para asegurar un correcto funcionamiento de esta.",
+          "dismiss": "OK",
+          "link": "Más información",
+          "href": "http://politicadecookies.com/"
+        }
+      })});
+      </script>
+
+      <!-- Comprobar compatibilidad con h.264 -->
+      <script>
+        var vid = document.createElement('video');
+        compH264 = vid.canPlayType('video/mp4; codecs="avc1.42E01E, mp4a.40.2"');
+        var compatible;
+        if(compH264 !== "probably"){
+          window.onload = function(){
+            document.getElementsByClassName("alertNotComp")[0].style.display = "block";
+            var ua = navigator.userAgent.toLowerCase();
+            if(ua.indexOf('windows nt 5.1') > 0 || ua.indexOf('windows nt 5.2') > 0)
+              document.getElementByClassName("firefoxXP")[0].style.display = "block";
+          }
+        }
+      </script>
+
       <?php
       // Título de la página proporcionado por el parámetro de la función,
       // seguido del dominio. Ejemplo: Big buck Bunny - otrotubo.es
       echo "<title>"
-        .(isset($tituloHeader)?$tituloHeader." - ":"")
+        .(isset($tituloHeader)?$tituloHeader." | ":"")
         ."otrotubo.es</title>";
       ?>
     </head>
@@ -104,7 +170,8 @@ function getHeader($tituloHeader){ ?>
               </div>
             </form>
             <ul class="nav navbar-nav navbar-right">
-              <?php if(isset($_SESSION['isLoged']) && $_SESSION['isLoged']){ // Si hay usuario logueado
+              <?php // Si hay usuario logueado
+              if(isset($_SESSION['isLoged']) && $_SESSION['isLoged']){
                 $logedUser = $_SESSION['logedUser'] ?>
                 <li class="dropdown loged-dropdown">
                   <a class="dropdown-toggle" data-toggle="dropdown" href="#">
@@ -171,4 +238,17 @@ function getHeader($tituloHeader){ ?>
           </div>
         </div>
       </nav>
+      <div class="alertNotComp" style="display:none">
+        <div class="alert alert-danger">
+          <p>
+            Su navegador no es compatible con vídeos codificados en h.264,
+            lo que significa que no podrá visualizar los vídeos de esta plataforma.
+            Por favor, actualice su navegador.
+            <span class="firefoxXP" style="display:none">
+              En Windows XP / Windows Server 2003, Firefox no es compatible con el codec h.264.
+              Por favor, use otro navegador como Google Chrome.
+            </span>
+          </p>
+        </div>
+      </div>
 <?php } ?>

@@ -2,7 +2,7 @@
 
 /* Padding para header sticky */
 body {
-  padding-top: 70px;
+  padding-top: 51px;
 }
 
 /* Eliminar lineas extra de bloques en móvil */
@@ -22,6 +22,12 @@ body {
 .profileDropButton{
   background: #db0000;
   border-color: #db0000;
+}
+
+/* Alert de aviso de navegador no compatible */
+.alertNotComp .alert {
+  display: table;
+  margin: auto;
 }
 
 /* Centrar elementos del menú en móvil */
