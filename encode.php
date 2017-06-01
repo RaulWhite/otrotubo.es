@@ -1,5 +1,11 @@
 <?php
-// Si no se limpia y están todo slos datos
+// Si se pide si es HD
+if(isset($_POST["checkIfHD"])
+    && $_POST["checkIfHD"]
+    && isset($_POST["tempVideo"]))
+  checkIfHD($_POST["tempVideo"]);
+
+// Si no se limpia y están todos los datos
 if(!isset($_POST["clean"]) 
     && isset($_POST["tempVideo"]) 
     && isset($_POST["resolution"]) 
@@ -41,5 +47,15 @@ function getFPS($videoFile) {
   // Por ejemplo: Si es un valor tipo 23.976, ffmpeg imprime 24000/1001,
   // ya que el resultado es más exacto que un número decimal definido,
   // y así se recomienda en la documentación de ffmpeg.
+}
+
+// Comprobador de resolución
+function checkIfHD($videoFile){
+  $output = shell_exec("bash ".$_SERVER['DOCUMENT_ROOT']."/sh/getResolution.sh"
+    ." \"".$videoFile."\"");
+  $videoRes = explode("\n", $output);
+  $isHD = ($videoRes[0] >= 1280 || $videoRes[1] >= 720);
+  header("Content-Type: application/json");
+  echo json_encode(array("isHD" => $isHD));
 }
 ?>

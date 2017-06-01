@@ -7,7 +7,6 @@ CREATE TABLE IF NOT EXISTS `otrotubo`.`usuarios` (
   `pass` VARCHAR(100) NOT NULL,
   `email` VARCHAR(80) NOT NULL,
   `nombre` VARCHAR(80) NULL,
-  `gravatar` BOOLEAN NOT NULL,
   `avatar` MEDIUMBLOB NULL,
   `bio` TEXT NULL,
   `fechaRegistro` DATE NOT NULL,
@@ -18,8 +17,8 @@ ENGINE = InnoDB;
 CREATE TABLE IF NOT EXISTS `otrotubo`.`videos` (
   `idVideo` VARCHAR(8) NOT NULL,
   `titulo` VARCHAR(100) NULL,
-  `estado360` VARCHAR(10) NULL,
-  `estado720` VARCHAR(10) NULL,
+  `estado` ENUM('encoding','ready','deleted') NULL,
+  `isHD` BOOLEAN NULL,
   `fechaSubida` DATE NOT NULL,
   `usuarios_nick` VARCHAR(30) NOT NULL,
   PRIMARY KEY (`idVideo`, `usuarios_nick`),

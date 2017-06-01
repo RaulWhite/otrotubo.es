@@ -17,19 +17,31 @@ if(isset($_POST["videoID"])){
     // ffmpeg imprime en todo momento la posición del vídeo por donde va
     preg_match_all("/time=(.*?) bitrate/", $logFile, $actualTimeArray);
     $actualTimeString = end($actualTimeArray[1]);
-    $actualTime = parseFfmpegTime($actualTimeString);
+    if($actualTimeString !== false)
+      $actualTime = parseFfmpegTime($actualTimeString);
 
     // Progreso actual. Es el cálculo del tiempo actual entre el total
     // (round para poder devolver porcentaje sin decimales)
     $actualProgress = round(($actualTime / $videoLength) * 100);
-    $finishedProgress = ($actualProgress == 100);
-
+    // Ha finalizado la conversión si el tiempo de conversión es la duración
+    // o si se ha imprimido la línea de info de tamaño final en el log
+    $finishedProgress = ($actualProgress == 100
+      || preg_match_all("/^video:(.*)$/m", $logFile));
+    $actualProgress = $finishedProgress?100:$actualProgress;
+    // Comprobar si ffmpeg imprime error de conversión en el log
+    $failed = preg_match_all("/Conversion failed!/", $logFile, $error);
+    // Si ha fallado, se borran los vídeos corruptos
+    if($failed){
+      unlink($_SERVER['DOCUMENT_ROOT']."/videos/360/$videoID.mp4");
+      unlink($_SERVER['DOCUMENT_ROOT']."/videos/720/$videoID.mp4");
+    }
     // Devolución para llamada de AJAX en la página de subida
     header("Content-Type: application/json");
     echo json_encode(array(
       "progress" => $actualProgress,
-      "finished" => $finishedProgress)
-      );
+      "finished" => $finishedProgress,
+      "failed" => $failed)
+    );
   }
 }
 

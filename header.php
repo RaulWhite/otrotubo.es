@@ -153,7 +153,7 @@ function getHeader($tituloHeader){ ?>
               <span class="icon-bar"></span>
               <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="#">
+            <a class="navbar-brand" href="/">
               <span><img alt="otrotubo.es" src="/images/logo.svg"></span>
               <span>otrotubo.es</span>
             </a>

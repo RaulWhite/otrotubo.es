@@ -15,6 +15,8 @@ $(function() {
   var respuesta = $('#respuesta');
 
   $("#video").bind("change", function(){
+    $("#progresoSubida").hide();
+    percent.html("0%");
     // Si el archivo pesa más de 2GB (valor en bytes; 1024 bytes por KB, etc)
     if(this.files[0] !== undefined && this.files[0].size > 2147483648){
       // Se avisa y se deshabilita el botón
