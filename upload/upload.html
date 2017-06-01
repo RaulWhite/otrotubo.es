@@ -1,0 +1,14 @@
+<form id="submitVideoForm" action="/upload/encode.php"
+method="POST" enctype="multipart/form-data">
+  <input type="file" id="video" name="video"><br>
+  <input type="submit" id="submit" disabled>
+</form>
+
+<div id="progresoSubida" style="display: none">
+  Progreso de subida: <span class="percent">0%</span>
+  <br><br>
+</div>
+
+<div id="respuesta"></div>
+<div class="barraCodificando" style="display:none">Codificando...</div>
+<script src="/upload/uploadCode.js"></script>

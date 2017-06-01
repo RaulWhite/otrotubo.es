@@ -1,16 +1,6 @@
-<form id="submitVideoForm" action="submitVideo.php" method="POST" enctype="multipart/form-data">
-  <input type="file" id="video" name="video"><br>
-  <input type="submit" id="submit" disabled>
-</form>
-
-<div id="progresoSubida" style="display: none">
-  Progreso de subida: <span class="percent">0%</span>
-  <br><br>
-</div>
-
-<div id="respuesta"></div>
-<script>
-$(function() {
+// Declaración global para el timeout del check
+var checkTimeout;
+$(document).ready(function() {
   var percent = $('.percent');
   var respuesta = $('#respuesta');
 
@@ -43,12 +33,12 @@ $(function() {
       // Actualizar porcentaje
       var percentVal = percentComplete + '%'; 
       percent.html(percentVal);
+      if(percentComplete == 100)
+        $(".barraCodificando").slideDown();
     },
-    // Al completar la subida
-    complete: function(xhr) { 
-      // Se muestra la salida del PHP destinatario del formulario
-      respuesta.html(xhr.responseText); 
+    complete: function(data){
+      respuesta.html(data.responseText);
+      $(".barraCodificando").slideUp();
     }
   });
-}); 
-</script>
+});
