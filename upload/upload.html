@@ -1,14 +1,93 @@
-<form id="submitVideoForm" action="/upload/encode.php"
-method="POST" enctype="multipart/form-data">
-  <input type="file" id="video" name="video"><br>
-  <input type="submit" id="submit" disabled>
-</form>
+<hr>
 
-<div id="progresoSubida" style="display: none">
-  Progreso de subida: <span class="percent">0%</span>
-  <br><br>
-</div>
-
-<div id="respuesta"></div>
-<div class="barraCodificando" style="display:none">Codificando...</div>
 <script src="/upload/uploadCode.js"></script>
+
+<form id="submitVideoForm" action="/upload/encode.php"
+method="POST" enctype="multipart/form-data" class="form">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-10 col-lg-push-1 col-md-12 col-sm-12 hidden-xs">
+        <label for="video">
+          Vídeo: <span class="text-danger">(Máximo 2GB)</span>
+        </label>
+        <div class="form-group">
+          <div class="input-group">
+            <label class="input-group-btn">
+              <span class="btn btn-primary">
+                  Seleccionar
+                  <input type="file" accept="video/*"
+                  id="video" name="video" style="display:none">
+              </span>
+            </label>
+            <input type="text" class="form-control"
+            id="tmpFileName" name="tmpFileName"
+            value="Ningún archivo seleccionado" disabled>
+            <label class="input-group-btn" id="submitInline">
+              <span class="btn btn-danger" disabled>
+                Subir
+                <input type="submit" id="submit" name="submit"
+                style="display:none" disabled>
+              </span>
+            </label>
+          </div>
+        </div>
+      </div>
+      <div class="col-xs-12 hidden-lg hidden-md hidden-sm">
+        <label for="video">
+          Vídeo: <span class="text-danger">(Máximo 2GB)</span>
+        </label>
+        <div class="form-group">
+          <div class="input-group videoSelectorMobile">
+            <label class="input-group-btn">
+              <span class="btn btn-primary">
+                  Seleccionar
+                  <input type="file" accept="video/*"
+                  id="video" name="video" style="display:none">
+              </span>
+            </label>
+            <input type="text" class="form-control"
+            id="tmpFileName" name="tmpFileName"
+            value="Ningún archivo seleccionado" disabled>
+          </div>
+          <input type="submit" id="submit" name="submit"
+          class="btn btn-block btn-lg btn-danger submitVideoMobile"
+          value="Subir" disabled>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-lg-10 col-lg-push-1 col-xs-12">
+        <div id="aviso" class="text-center"></div>
+        <div class="progress" id="progresoSubida" style="display: none">
+          <div class="progress-bar progress-bar-striped active" role="progressbar"
+          id="barraProgreso" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"
+          style="width:0%">
+            <h4>0%</h4>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-lg-10 col-lg-push-1 col-md-12 col-sm-12">
+        <div class="form-group">
+          <label for="videoTitle">
+            Título del vídeo: (si no se indica, se usará el nombre del archivo)
+          </label>
+          <input type="text" class="form-control"
+          id="videoTitle" name="videoTitle" placeholder="Título del vídeo *"
+          required>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-lg-10 col-lg-push-1 col-md-12 col-sm-12">
+        <div class="form-group">
+          <label for="videoDesc">Descripción del vídeo:</label>
+          <textarea class="form-control" rows="5"
+          id="videoDesc" name="videoDesc" style="resize: vertical"
+          placeholder="Descripción del vídeo"></textarea>
+        </div>
+      </div>
+    </div>
+  </div>
+</form>

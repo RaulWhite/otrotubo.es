@@ -6,9 +6,13 @@ require_once($_SERVER["DOCUMENT_ROOT"]."/upload/encodeFunctions.php");
 if(isset($_FILES['video']) && is_uploaded_file($_FILES['video']['tmp_name'])){
   // Si no es un vídeo
   if(strpos($_FILES['video']['type'], "video/") === false){
-    echo "El archivo subido no es un vídeo";
+    echo json_encode(array(
+      "mensaje" => "El archivo subido no es un vídeo",
+      "success" => false
+      )
+    );
     exit();
-  } 
+  }
 
   // Nombre con fecha para evitar duplicados
   $uploadedVideoTmpName = time()."_".$_FILES['video']['name']; 
@@ -30,11 +34,19 @@ if(isset($_FILES['video']) && is_uploaded_file($_FILES['video']['tmp_name'])){
     unlink($tempVideo);
     unlink($_SERVER["DOCUMENT_ROOT"]."/videos/360/$videoID.mp4");
     unlink($_SERVER["DOCUMENT_ROOT"]."/videos/720/$videoID.mp4");
-    echo "Error en la conversión.";
+    echo json_encode(array(
+      "mensaje" => "Error en la conversión",
+      "success" => false
+      )
+    );
     exit();
   } else {
     unlink($tempVideo);
-    echo "Procesado. <a href='/ver?video=$videoID'>Enlace al vídeo</a>";
+    echo json_encode(array(
+      "mensaje" => "Procesado <a href='/ver?video=$videoID'>Enlace al vídeo</a>",
+      "success" => true
+      )
+    );
   }
 }
 

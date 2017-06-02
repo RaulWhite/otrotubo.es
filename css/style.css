@@ -84,3 +84,24 @@ img.tmpAvatar{
 }
 
 /* FIN Formulario registro */
+
+/* Formulario subida vídeo */
+
+#progresoSubida {
+  height: auto;
+}
+
+.videoSelectorMobile .btn {
+  border-bottom-left-radius: 0;
+}
+
+.videoSelectorMobile #tmpFileName{
+  border-bottom-right-radius: 0;
+}
+
+.submitVideoMobile {
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+}
+
+/* FIN Formulario subida vídeo */
