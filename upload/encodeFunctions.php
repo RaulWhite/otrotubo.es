@@ -18,7 +18,8 @@ function generateRandomString($length = 8) {
 
 // Comprobador de FPS. Si se pasa de 30, se divide por las veces que se pasa
 function getFPS($videoFile) { 
-  $output = shell_exec("bash ".$_SERVER['DOCUMENT_ROOT']."/sh/checkfps.sh"
+  global $webServerRoot;
+  $output = shell_exec("bash ".$webServerRoot."/sh/checkfps.sh"
     ." \"".$videoFile."\"");
   $res = eval("return ".$output.";");
   if ($res > 30) 
@@ -32,16 +33,15 @@ function getFPS($videoFile) {
 }
 
 // Convertir
-function convert($resolution){
-  global $tempVideo;
-  global $videoID;
+function convert($resolution, $tmpVideo, $idVideo){
+  global $webServerRoot;
   // Obtener FPS para codificar el vídeo
-  $videoFPS = getFPS($tempVideo);
+  $videoFPS = getFPS($tmpVideo);
   $output = array();
   $return_var = -1;
-  exec($_SERVER['DOCUMENT_ROOT']."/sh/codificar"
-    .$resolution."p.sh"." \"".$tempVideo."\" \"".$videoID."\""
-    ." \"".$videoFPS."\" \"".$_SERVER['DOCUMENT_ROOT']."\"",
+  exec($webServerRoot."/sh/codificar"
+    .$resolution."p.sh"." \"".$tmpVideo."\" \"".$idVideo."\""
+    ." \"".$videoFPS."\" \"".$webServerRoot."\"",
     $output, $return_var);
 
   return $return_var;
@@ -49,7 +49,8 @@ function convert($resolution){
 
 // Comprobador de resolución HD
 function checkIfHD($videoFile){
-  $output = shell_exec("bash ".$_SERVER['DOCUMENT_ROOT']."/sh/getResolution.sh"
+  global $webServerRoot;
+  $output = shell_exec("bash ".$webServerRoot."/sh/getResolution.sh"
     ." \"".$videoFile."\"");
   $videoRes = explode("\n", $output);
   return ($videoRes[0] >= 1280 || $videoRes[1] >= 720);

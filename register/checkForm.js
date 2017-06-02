@@ -168,5 +168,3 @@ function alertInput(show, input, message){
     });
   }
 }
-
-// Función para comprobar si todo está correcto al hacer el submit

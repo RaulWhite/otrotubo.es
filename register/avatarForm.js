@@ -134,19 +134,28 @@ $(document).ready(function(){
   // Al realizar el submit, si se está usando un avatar subido,
   // se pasa la codificación base64 a un input hidden.
   $("form#registerForm").submit(function(){
-    $(this).append(
-      "<input type='hidden' name='usingGravatar'"
-      + "id='usingGravatar' value='"+usingGravatar+"'>"
-    );
-    if(!usingGravatar){
+    if($("form#registerForm #usingGravatar").length > 0)
+      $("form#registerForm #usingGravatar").val(usingGravatar);
+    else{
       $(this).append(
-        "<input type='hidden' name='avatarBase64'"
-        +"id='avatarBase64' value='"
-        +$(".tmpAvatar").attr("src").slice(
-          $(".tmpAvatar").attr("src").indexOf("base64,") + "base64,".length
-        )+"'>"
+        "<input type='hidden' name='usingGravatar'"
+        + "id='usingGravatar' value='"+usingGravatar+"'>"
       );
     }
+    if(!usingGravatar){
+      var srcBase64 = $(".tmpAvatar").attr("src").slice(
+        $(".tmpAvatar").attr("src").indexOf("base64,") + "base64,".length
+      );
+      if($("form#registerForm #avatarBase64").length > 0)
+        $("form#registerForm #avatarBase64").val(srcBase64);
+      else{
+        $(this).append(
+          "<input type='hidden' name='avatarBase64'"
+          +"id='avatarBase64' value='"+srcBase64+"'>"
+        );
+      }
+    } else if($("form#registerForm #avatarBase64").length > 0)
+      $("form#registerForm #avatarBase64").remove();
   });
 
   // Función para usar Gravatar
