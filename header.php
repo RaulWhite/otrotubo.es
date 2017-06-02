@@ -67,6 +67,7 @@ function getHeader($tituloHeader){ ?>
       crossorigin="anonymous"></script>
       <script src='https://www.google.com/recaptcha/api.js'></script>
       
+      <!-- JS de animación para dropdowns del navbar -->
       <script>
       $(document).ready(function(){
         $('.navbar-nav li.dropdown').on('show.bs.dropdown', function() {
@@ -206,7 +207,7 @@ function getHeader($tituloHeader){ ?>
                     </a></li>
                   </ul>
                 </li>
-                <li><a href="#">Subir vídeo</a></li>
+                <li><a href="/upload">Subir vídeo</a></li>
               <?php } else { // Si no hay usuario logueado ?>
                 <li class="dropdown login-dropdown">
                   <a class="dropdown-toggle" data-toggle="dropdown" href="#">
