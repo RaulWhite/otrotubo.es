@@ -2,7 +2,7 @@
 
 <script src="/upload/uploadCode.js"></script>
 
-<form id="submitVideoForm" action="/upload/encode.php"
+<form id="submitVideoForm" action="/upload/submitToQueue.php"
 method="POST" enctype="multipart/form-data" class="form">
   <div class="container">
     <div class="row">
@@ -57,7 +57,9 @@ method="POST" enctype="multipart/form-data" class="form">
     </div>
     <div class="row">
       <div class="col-lg-10 col-lg-push-1 col-xs-12">
-        <div id="aviso" class="text-center"></div>
+        <div id="aviso" class="text-center">
+          <div class="alert" style="display:none"></div>
+        </div>
         <div class="progress" id="progresoSubida" style="display: none">
           <div class="progress-bar progress-bar-striped active" role="progressbar"
           id="barraProgreso" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"
@@ -74,8 +76,7 @@ method="POST" enctype="multipart/form-data" class="form">
             Título del vídeo: (si no se indica, se usará el nombre del archivo)
           </label>
           <input type="text" class="form-control"
-          id="videoTitle" name="videoTitle" placeholder="Título del vídeo *"
-          required>
+          id="videoTitle" name="videoTitle" placeholder="Título del vídeo">
         </div>
       </div>
     </div>

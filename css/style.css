@@ -29,17 +29,50 @@ video#player {
   margin: 0 auto;
 }
 
+@media(max-height: 770px){
+  .wideVideo video#player {
+    max-height: 90vh !important;
+  }
+}
+
+.container-fluid.video-container,
+.container-fluid.video-container .row .player-col{
+  padding: 0;
+}
+
+.container-fluid.video-container .row{
+  margin: 0;
+}
+
 /* Si el vídeo en modo normal no cabe */
-@media (max-width: 640px) {
-  /* Se oculta el botón de modo cine (no tendría sentido) */
+@media (max-width: 767px){
+/* Se oculta el botón de modo cine (no tendría sentido) */
   #wSelector {
     display: none;
+  }
+}
+
+@media (max-width: 991px) {
+  .player-col {
+    padding: 0;
   }
 
   /* Se adapta el vídeo al ancho de la ventana */
   .normalVideo video#player {
     height: initial;
     width: 100%;
+  }
+}
+
+.info-col p.collapsed {
+  max-height: 4.25em;
+  overflow: hidden;
+}
+
+@media (min-width: 992px){
+  .info-col.info-narrow {
+    max-height: 360px;
+    overflow: auto;
   }
 }
 

@@ -17,9 +17,9 @@ ENGINE = InnoDB;
 CREATE TABLE IF NOT EXISTS `otrotubo`.`videos` (
   `idVideo` VARCHAR(8) NOT NULL,
   `titulo` VARCHAR(100) NULL,
-  `estado` ENUM('encoding','ready','deleted') NULL,
+  `estado` ENUM('queued','encoding','ready','error','deleted') NULL,
   `isHD` BOOLEAN NULL,
-  `fechaSubida` DATE NOT NULL,
+  `fechaSubida` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `usuarios_nick` VARCHAR(30) NOT NULL,
   PRIMARY KEY (`idVideo`, `usuarios_nick`),
   INDEX `fk_videos_usuarios_idx` (`usuarios_nick` ASC),

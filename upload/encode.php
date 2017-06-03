@@ -1,53 +1,91 @@
 <?php
 // Archivo con funciones de ayuda para la codificación
-require_once($_SERVER["DOCUMENT_ROOT"]."/upload/encodeFunctions.php");
+require_once("encodeFunctions.php");
 
-// Si se ha subido un archivo
-if(isset($_FILES['video']) && is_uploaded_file($_FILES['video']['tmp_name'])){
-  // Si no es un vídeo
-  if(strpos($_FILES['video']['type'], "video/") === false){
-    echo json_encode(array(
-      "mensaje" => "El archivo subido no es un vídeo",
-      "success" => false
-      )
-    );
-    exit();
-  }
+// Ruta del servidor web, ya que este es un script que se ejecuta por terminal.
+$webServerRoot = "/var/www/html/otrotubo";
 
-  // Nombre con fecha para evitar duplicados
-  $uploadedVideoTmpName = time()."_".$_FILES['video']['name']; 
-  // Ruta temporal para el vídeo subido
-  $tempVideo = $_SERVER['DOCUMENT_ROOT']."/videos/tmp/".$uploadedVideoTmpName; 
-  // Mover el vídeo a la ruta temporal
-  move_uploaded_file($_FILES['video']['tmp_name'], $tempVideo); 
-  // Generar ID random
-  $videoID = generateRandomString();
-  
-  // Codificar en 360p
-  $return_var = convert(360);
+// Archivo ini con las credenciales para acceder a la BD.
+// Se encuentra en la carpeta superior a la raíz de la página.
+$bdCred = parse_ini_file(dirname($webServerRoot)."/mysqlcon.ini");
+$con = new mysqli(
+  "localhost",
+  $bdCred['dbuser'],
+  $bdCred['dbpass'],
+  $bdCred['db']
+);
+$con->set_charset("utf8");
 
-  if($return_var === 0 && checkIfHD($tempVideo)){
-    $return_var = convert(720);
-  }
+// Si hay un vídeo procesandose en otra instancia del código
+$resu = $con->query("SELECT idVideo FROM `videos` WHERE estado = 'encoding'");
+if(!$resu || $resu->num_rows > 0)
+  endScript(false);
 
-  if($return_var !== 0){
-    unlink($tempVideo);
-    unlink($_SERVER["DOCUMENT_ROOT"]."/videos/360/$videoID.mp4");
-    unlink($_SERVER["DOCUMENT_ROOT"]."/videos/720/$videoID.mp4");
-    echo json_encode(array(
-      "mensaje" => "Error en la conversión",
-      "success" => false
-      )
-    );
-    exit();
-  } else {
-    unlink($tempVideo);
-    echo json_encode(array(
-      "mensaje" => "Procesado <a href='/ver?video=$videoID'>Enlace al vídeo</a>",
-      "success" => true
-      )
-    );
-  }
+// Consulta de próximo vídeo pendiente en la cosa
+$resu = $con->query("SELECT idVideo FROM `videos` WHERE estado = 'queued' 
+  ORDER BY fechaSubida ASC LIMIT 1");
+
+// Si no hay vídeos pendientes en la cola, se termina el proceso
+if(!$resu || $resu->num_rows == 0)
+  endScript(false);
+
+// ID del vídeo a procesar
+$idVideo = $resu->fetch_assoc()["idVideo"];
+// Archivo original subido
+$tmpVideo = glob($webServerRoot."/videos/tmp/$idVideo.*")[0];
+
+// Si no existe el archivo subido
+if(!is_file($tmpVideo)){
+  writeStateToBD("error");
+  endScript(true);
 }
 
+// Indicar vídeo ocupado en cola
+writeStateToBD("encoding");
+
+// Codificar en 360p
+$return_var = convert(360, $tmpVideo, $idVideo);
+
+// Si no ha habido errores, y el vídeo original es HD, codificar en 720p
+$isHD = checkIfHD($tmpVideo);
+if($return_var === 0 && $isHD)
+  $return_var = convert(720, $tmpVideo, $idVideo);
+
+// Borrar archivo original
+unlink($tmpVideo);
+
+// Si ha habido errores en los procesos de conversión
+if($return_var !== 0){
+  // Borrar todos los vídeos relacionados
+  $tmp360 = $webServerRoot."/videos/360/$idVideo.mp4";
+  $tmp720 = $webServerRoot."/videos/360/$idVideo.mp4";
+  if(is_file($tmp360)){unlink($tmp360);}
+  if(is_file($tmp720)){unlink($tmp720);}
+  // Indicar error en la BD
+  writeStateToBD("error");
+} else 
+  // Si todo ha ido bien, el vídeo está lista para visualizarse
+  writeStateToBD("ready");
+
+endScript(true);
+
+// Función para indicar el nuevo estado de un vídeo en la BD
+function writeStateToBD($estado){
+  global $con;
+  global $isHD;
+  global $idVideo;
+  $con->query("UPDATE `videos` SET estado = '$estado'"
+    .((isset($isHD))?", isHD = $isHD":" ")
+    ." WHERE idVideo = '".$con->real_escape_string($idVideo)."'");
+}
+
+// Función para volver a ejecutar este archivo y terminar el proceso actual
+function endScript($rerun = false){
+  if(isset($con))
+    $con->close();
+  global $webServerRoot;
+  if($rerun)
+    pclose(popen("php ".$webServerRoot."/upload/encode.php &","r"));
+  exit();
+}
 ?>
