@@ -14,7 +14,6 @@ if(is_uploaded_file($_FILES['video']['tmp_name'])
     "success" => false
     )
   );
-  $con->close();
   exit();
 } else if(!is_uploaded_file($_FILES['video']['tmp_name'])){
   // No hay archivo subido (posible error)
@@ -23,7 +22,6 @@ if(is_uploaded_file($_FILES['video']['tmp_name'])
     "success" => false
     )
   );
-  $con->close();
   exit();
 }
 

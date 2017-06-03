@@ -1,8 +1,17 @@
 /* HEADER */
 
 /* Padding para header sticky */
-body {
-  padding-top: 51px;
+@media(min-width: 768px){
+  body {
+    padding-top: 51px;
+  }
+}
+
+/* Estilo de navbar en móvil */
+.navbar-cabecera {
+  border-radius: 0;
+  border: none;
+  margin-bottom: 0;
 }
 
 /* Eliminar lineas extra de bloques en móvil */
@@ -40,7 +49,7 @@ body {
 /* Colores del header (autogenerado con TWBSColor) */
 .navbar-default {
   background: #db0000;
-  border-color: #9d0000;
+  border-color: #db0000;
 }
 .navbar-default .navbar-brand {
   color: #ffffff;

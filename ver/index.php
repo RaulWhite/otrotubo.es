@@ -4,49 +4,101 @@ getHeader("Vídeo");
 
 $idVideo = $_GET["video"];
 
-if (!isset($idVideo)){
-  header('Location: /');
+if (!isset($idVideo)){ ?>
+  <script>window.location.replace("/");</script>
+  <?php die();
 }
 
+// Archivo ini con las credenciales para acceder a la BD.
+// Se encuentra en la carpeta superior a la raíz de la página.
+$bdCred = parse_ini_file(dirname($_SERVER['DOCUMENT_ROOT'])."/mysqlcon.ini");
+$con = new mysqli(
+  "localhost",
+  $bdCred['dbuser'],
+  $bdCred['dbpass'],
+  $bdCred['db']
+);
+$con->set_charset("utf8");
+
+$resu = $con->query("SELECT * FROM videos WHERE idVideo = '"
+  .$con->real_escape_string($idVideo)."'");
+
+if(!$resu){
+  $con->close();
+  die("Error en la base de datos");
+}
+
+if($resu->num_rows == 0){
+  $con->close();
+  die("No se ha encontrado el vídeo");
+}
+
+$infoVideo = $resu->fetch_assoc();
+
+if($infoVideo["estado"] == "queued"){
+  $con->close();
+  die("El vídeo solicitado está en cola de proceso");
+}
+
+if($infoVideo["estado"] == "encoding"){
+  $con->close();
+  die("El vídeo solicitado se está procesando");
+}
+
+if($infoVideo["estado"] == "error"){
+  $con->close();
+  die("El vídeo solicitado ha tenido un error en el proceso de conversión");
+}
+
+if($infoVideo["estado"] == "deleted"){
+  $con->close();
+  die("El vídeo solicitado se ha eliminado");
+}
 ?>
-<script>
-  $(document).ready(function(){
-    $('#player')[0].play();
-    $('#qSelector').click(function(){
-      tiempo = $('#player')[0].currentTime;
-      pausado = $('#player').get(0).paused;
-      $('source', '#player').eq(1).prependTo('#player');
-      $('#player')[0].load();
-      $('#player')[0].currentTime = tiempo;
-      if(!pausado)
-        $('#player')[0].play();
-      $(this).text(function(i, text){
-        return text === "Cambiar a 720p" ? "Cambiar a 360p" : "Cambiar a 720p";
-      })
-      $(this).toggleClass("btn-danger btn-primary")
-    })
-    $('#wSelector').click(function(){
-      $('#playerWrapper').toggleClass("wideVideo normalVideo");
-      $(this).text(function(i, text){
-          return text === "Modo cine" ? "Modo normal" : "Modo cine";
-      })
-      $(this).toggleClass("btn-danger btn-primary")
-    })
-  })
-</script>
-<button id="qSelector" class="btn btn-danger">Cambiar a 720p</button>
-<button id="wSelector" class="btn btn-danger">Modo cine</button>
-<br>
-<div id="playerWrapper" class="normalVideo">
-  <video id="player" controls>
-    <source label="360p"
-      src=<?php echo "\"/videos/360/".$idVideo.".mp4\"" ?>
-      type="video/mp4">
-    <source label="720p"
-      src=<?php echo "\"/videos/720/".$idVideo.".mp4\"" ?>
-      type="video/mp4">
-    Su navegador no soporta vídeo HTML5.
-  </video>
+
+<script src="/ver/playerCode.js"></script>
+
+<div class="container video-container">
+  <div class="row">
+    <div class="col-lg-7 col-md-9 col-sm-12 col-xs-12 player-col">
+      <div id="playerWrapper" class="normalVideo text-center">
+        <video id="player" controls>
+          <source label="360p"
+            src=<?php echo "\"/videos/360/".$idVideo.".mp4\"" ?>
+            type="video/mp4">
+          Su navegador no soporta vídeo HTML5.
+        </video>
+      </div>
+      <?php if($infoVideo["isHD"]){ ?>
+        <button id="qSelector" class="btn btn-danger">Cambiar a 720p</button>
+      <?php } ?>
+      <button id="wSelector" class="btn btn-danger">Modo cine</button>
+    </div>
+    <div class="col-lg-5 col-md-3 col-sm-12 col-xs-12 info-col info-narrow">
+      <h3><?php echo $infoVideo["titulo"] ?></h3>
+      <p class="collapsed text-justify">
+        <?php echo $infoVideo["descripcion"] ?>
+      </p>
+      <button class="readMoreDesc readMoreNarrow btn btn-default btn-sm btn-info btn-block"
+      style="display:none">Leer más</button>
+    </div>
+  </div>
 </div>
+
+<div class="container">
+  <div class="row">
+    <div class="col-xs-12 info-col info-wide" style="display:none">
+      <h3><?php echo $infoVideo["titulo"] ?></h3>
+      <p class="collapsed text-justify">
+        <?php echo $infoVideo["descripcion"] ?>
+      </p>
+      <button class="readMoreDesc readMoreWide btn btn-default btn-sm btn-info btn-block"
+      style="display:none">Leer más</button>
+    </div>
+  </div>
+</div>
+
   </body>
 </html>
+
+<?php $con->close(); ?>

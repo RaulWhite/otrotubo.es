@@ -20,6 +20,8 @@ function getHeader($tituloHeader){ ?>
       <meta charset="UTF-8">
       <meta name="viewport" content="width=device-width, user-scalable=no">
       <meta http-equiv="X-UA-Compatible" content="ie=edge">
+      <meta name="theme-color" content="#DB0000">
+      <meta name="msapplication-TileColor" content="#DB0000">
 
       <!-- http://browser-update.org/ - Código JS para detectar navegadores desactualizados -->
       <script> 
@@ -67,8 +69,8 @@ function getHeader($tituloHeader){ ?>
       crossorigin="anonymous"></script>
       <script src='https://www.google.com/recaptcha/api.js'></script>
       
-      <!-- JS de animación para dropdowns del navbar -->
       <script>
+      // JS de animación para dropdowns del navbar
       $(document).ready(function(){
         $('.navbar-nav li.dropdown').on('show.bs.dropdown', function() {
           $(this).find('.dropdown-menu').first().stop(true, true).slideDown();
@@ -79,7 +81,20 @@ function getHeader($tituloHeader){ ?>
             $('.navbar-nav li.dropdown').removeClass('open');
           });
         });
+
+        if (window.innerWidth < 768) {
+          $(".navbar-cabecera").removeClass("navbar-fixed-top");
+        }
       })
+
+      // JS para quitar el fixed del navbar en resoluciones móviles (< 768px)
+      $(window).resize(function() {
+        if (window.innerWidth < 768) {
+          $(".navbar-cabecera").removeClass("navbar-fixed-top");
+        } else {
+          $(".navbar-cabecera").addClass("navbar-fixed-top");
+        }
+      });
       </script>
       
       <!-- Font Awesome CDN -->
@@ -142,7 +157,7 @@ function getHeader($tituloHeader){ ?>
       ?>
     </head>
     <body>
-      <nav class="navbar navbar-default navbar-fixed-top">
+      <nav class="navbar navbar-default navbar-fixed-top navbar-cabecera">
         <div class="container-fluid">
           <div class="navbar-header">
             <button type="button"
