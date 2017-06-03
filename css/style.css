@@ -3,6 +3,23 @@
   text-shadow: none;
 }
 
+/* Lista vídeo home */
+
+.homeItem a {
+  text-decoration: none;
+}
+
+.homeItem p {
+  max-height: 4.25em;
+  overflow: hidden;
+}
+
+.homeItem:not(:last-child){
+  border-bottom: 1px solid #AAA;
+}
+
+/* FIN Lista vídeo home */
+
 /* Reproductor */
 
 #player {
@@ -42,6 +59,14 @@ video#player {
 
 .container-fluid.video-container .row{
   margin: 0;
+}
+
+.alertVideoWrapper {
+  padding-top: 20px;
+}
+
+.alertVideo h3 {
+  margin: 20px 0;
 }
 
 /* Si el vídeo en modo normal no cabe */
@@ -135,6 +160,14 @@ img.tmpAvatar{
 .submitVideoMobile {
   border-top-left-radius: 0;
   border-top-right-radius: 0;
+}
+
+.publicToggle, .publicToggle .row .col-xs-12 {
+  padding: 0;
+}
+
+.publicToggle .row {
+  margin: 0;
 }
 
 /* FIN Formulario subida vídeo */

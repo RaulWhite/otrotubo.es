@@ -1,6 +1,5 @@
 <?php // Incluir librerías y header
 require_once($_SERVER['DOCUMENT_ROOT']."/header.php");
-getHeader("Vídeo");
 
 $idVideo = $_GET["video"];
 
@@ -23,37 +22,34 @@ $con->set_charset("utf8");
 $resu = $con->query("SELECT * FROM videos WHERE idVideo = '"
   .$con->real_escape_string($idVideo)."'");
 
-if(!$resu){
-  $con->close();
-  die("Error en la base de datos");
-}
+if(!$resu)
+  videoNotAvailable("Error en la base de datos", true);
 
-if($resu->num_rows == 0){
-  $con->close();
-  die("No se ha encontrado el vídeo");
-}
+if($resu->num_rows == 0)
+  videoNotAvailable("No se ha encontrado el vídeo", true);
 
 $infoVideo = $resu->fetch_assoc();
 
-if($infoVideo["estado"] == "queued"){
-  $con->close();
-  die("El vídeo solicitado está en cola de proceso");
+switch ($infoVideo["estado"]) {
+  case "queued":
+    videoNotAvailable("El vídeo solicitado está en cola de proceso");
+    break;
+  case "encoding":
+    videoNotAvailable("El vídeo solicitado se está procesando");
+    break;
+  case "error":
+    videoNotAvailable("El vídeo solicitado ha tenido un error en el proceso de conversión", true);
+    break;
+  case "deleted":
+    videoNotAvailable("El vídeo solicitado se ha eliminado", true);
+    break;
+  case "ready":
+  default:
+    continue;
+    break;
 }
 
-if($infoVideo["estado"] == "encoding"){
-  $con->close();
-  die("El vídeo solicitado se está procesando");
-}
-
-if($infoVideo["estado"] == "error"){
-  $con->close();
-  die("El vídeo solicitado ha tenido un error en el proceso de conversión");
-}
-
-if($infoVideo["estado"] == "deleted"){
-  $con->close();
-  die("El vídeo solicitado se ha eliminado");
-}
+getHeader($infoVideo["titulo"]);
 ?>
 
 <script src="/ver/playerCode.js"></script>
@@ -101,4 +97,22 @@ if($infoVideo["estado"] == "deleted"){
   </body>
 </html>
 
-<?php $con->close(); ?>
+<?php 
+$con->close();
+
+// Si no se puede mostrar el vídeo, se cierra la conexión y se para la ejecución
+function videoNotAvailable($message, $severe = false){
+  getHeader("Vídeo no disponible");
+  $alertClasses = "alert alertVideo alert-".($severe?"danger":"warning");
+  ?>
+  <div class="text-center alertVideoWrapper">
+    <div class=<?php echo "'$alertClasses'" ?> style="display: inline-block">
+      <h3><?php echo $message ?></h3>
+    </div>
+  </div>
+  <?php
+  echo "</body></html>";
+  $con->close();
+  exit();
+}
+?>

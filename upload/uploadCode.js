@@ -1,4 +1,5 @@
 $(document).ready(function() {
+
   var percentBar = $('#barraProgreso');
   var percentString = $('#barraProgreso h4');
   var aviso = $('#aviso .alert');

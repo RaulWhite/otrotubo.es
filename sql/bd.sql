@@ -20,6 +20,7 @@ CREATE TABLE IF NOT EXISTS `otrotubo`.`videos` (
   `descripcion` TEXT NULL,
   `estado` ENUM('queued','encoding','ready','error','deleted') NULL,
   `isHD` BOOLEAN NULL,
+  `public` BOOLEAN NOT NULL DEFAULT TRUE,
   `fechaSubida` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `usuarios_nick` VARCHAR(30) NOT NULL,
   PRIMARY KEY (`idVideo`, `usuarios_nick`),

@@ -69,11 +69,14 @@ move_uploaded_file($_FILES['video']['tmp_name'], $tempVideo);
 
 // Insertar el vídeo en cola en la BD
 $resu = $con->query("INSERT INTO `videos` "
-  ."(idVideo, titulo, descripcion, estado, fechaSubida, usuarios_nick) VALUES('"
+  ."(idVideo, titulo, descripcion, estado, public, fechaSubida, usuarios_nick) VALUES('"
   .$con->real_escape_string($idVideo)."', '"
   .$con->real_escape_string($videoTitle)."', "
   .(is_null($videoDesc)?"NULL":"'".$con->real_escape_string($videoDesc)."'").", '"
-  .$con->real_escape_string("queued")."', '"
+  .$con->real_escape_string("queued")."', "
+  .$con->real_escape_string(
+    (isset($_POST["videoPublic"]) && $_POST["videoPublic"] == "on")
+    ?"TRUE":"FALSE").", '"
   .$con->real_escape_string(date("Y-m-d H:i:s"))."', '"
   .$con->real_escape_string($_SESSION["logedUser"]->getNick())."')");
 

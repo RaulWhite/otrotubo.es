@@ -1,5 +1,6 @@
 <hr>
 
+<link href="/lib/toggle-switch.css" rel="stylesheet" type="text/css">
 <script src="/upload/uploadCode.js"></script>
 
 <form id="submitVideoForm" action="/upload/submitToQueue.php"
@@ -77,6 +78,33 @@ method="POST" enctype="multipart/form-data" class="form">
           </label>
           <input type="text" class="form-control"
           id="videoTitle" name="videoTitle" placeholder="Título del vídeo">
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-lg-10 col-lg-push-1 col-md-12 col-sm-12">
+        <div class="form-group">
+          <div class="container-fluid publicToggle">
+            <div class="row">
+              <div class="col-lg-2 col-md-2 col-sm-3 col-xs-12">
+                <label for="videoPublic">Publicar vídeo: </label>
+              </div>
+              <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12">
+                <label class="switch-light" onclick="">
+                  <input type="checkbox" id="videoPublic" name="videoPublic" checked>
+                  <span class="progress active">
+                    <span>Oculto</span>
+                    <span>Público</span>
+                    <a class="progress-bar progress-bar-info"></a>
+                  </span>
+                </label>
+              </div>
+            </div>
+            <p>
+              Si se selecciona "Público", el vídeo subido aparecerá en la lista
+              de últimos vídeos subidos y en búsquedas.
+            </p>
+          </div>
         </div>
       </div>
     </div>

@@ -6,6 +6,8 @@ Está basado en HTML5, PHP y JS.
 Las únicas librerías que de momento he usado son:
   - Para el diseño:
     - Bootstrap (http://getbootstrap.com/)
+    - CSS Toggle Switch (https://github.com/ghinda/css-toggle-switch)
+      - Usado para estilizar toggles (checkboxes) en formularios
 
   - Para el funcionamiento de la página:
     - jQuery (https://jquery.com/)
