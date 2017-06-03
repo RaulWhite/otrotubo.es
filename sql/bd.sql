@@ -17,6 +17,7 @@ ENGINE = InnoDB;
 CREATE TABLE IF NOT EXISTS `otrotubo`.`videos` (
   `idVideo` VARCHAR(8) NOT NULL,
   `titulo` VARCHAR(100) NULL,
+  `descripcion` TEXT NULL,
   `estado` ENUM('queued','encoding','ready','error','deleted') NULL,
   `isHD` BOOLEAN NULL,
   `fechaSubida` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,

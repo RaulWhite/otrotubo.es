@@ -3,7 +3,7 @@
 /* Padding para header sticky */
 @media(min-width: 768px){
   body {
-    padding-top: 51px;
+    padding-top: 50px;
   }
 }
 
