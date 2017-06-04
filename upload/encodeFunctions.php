@@ -60,8 +60,12 @@ function getDuration($videoFile){
   global $webServerRoot;
   $output = shell_exec("bash ".$webServerRoot."/sh/getDuration.sh"
     ." \"".$videoFile."\"");
-  $videoRes = explode("\n", $output);
-  return $videoRes;
+  $output = explode("\n", $output);
+  foreach ($output as $duration) {
+    if($duration != "N/A" && $duration != "")
+      break;
+  }
+  return $duration;
 }
 
 // Obtener resolución
@@ -71,5 +75,53 @@ function getResolution($videoFile){
     ." \"".$videoFile."\"");
   $videoRes = explode("\n", $output);
   return $videoRes;
+}
+
+// Crear imagen con minuaturas del vídeo
+function createThumbnails($idVideo){
+  global $webServerRoot;
+
+  if(!is_dir($webServerRoot."/videos/tmp/thumbs"))
+    mkdir($webServerRoot."/videos/tmp/thumbs");
+
+  if(!is_dir($webServerRoot."/videos/thumbs"))
+    mkdir($webServerRoot."/videos/thumbs");
+
+  $video = $webServerRoot."/videos/360/$idVideo.mp4";
+
+  $output = shell_exec("bash ".$webServerRoot."/sh/getDuration.sh"
+    ." \"".$video."\"");
+  $output = explode("\n", $output);
+  foreach ($output as $duration) {
+    if($duration != "N/A" && $duration != "")
+      break;
+  }
+
+  mkdir($webServerRoot."/videos/tmp/thumbs/$idVideo");
+  $stack = new \Imagick();
+
+  for($i = 1; $i <= 12; $i++){
+    $seek = ($duration/12)*($i-1);
+    exec("bash ".$webServerRoot."/sh/generateThumb.sh"
+      ." \"".$video."\" \"".$seek."\""
+      ." \"".$idVideo."\" \"".(($i < 10)?("0".$i):$i)."\""
+      ." \"".$webServerRoot."\"");
+    $stack->addImage(new \Imagick(
+      $webServerRoot."/videos/tmp/thumbs/$idVideo/"
+      .(($i < 10)?("0".$i):$i).".png")
+    );
+  }
+
+  $montage = $stack->montageImage(new ImagickDraw(), '12x', '400x225', 0, '0');
+  $montage->setImageFormat("jpg");
+  $montage->setImageCompression(Imagick::COMPRESSION_JPEG); 
+  $montage->setImageCompressionQuality(55);
+  $montage->writeImage($webServerRoot."/videos/thumbs/$idVideo.jpg");
+
+  $target = $webServerRoot."/videos/tmp/thumbs/$idVideo";
+  for($i = 1; $i <= 12; $i++){
+    unlink($target."/".(($i < 10)?("0".$i):$i).".png");
+  }
+  rmdir($target);
 }
 ?>

@@ -18,6 +18,15 @@
   border-bottom: 1px solid #AAA;
 }
 
+.homeItem .videoThumbs{
+  margin: 20px auto;
+  background-color: grey;
+  background-size: cover;
+  background-position-x: 675px;
+  width: 225px;
+  height: calc(225px * 9 / 16);
+}
+
 /* FIN Lista vídeo home */
 
 /* Reproductor */

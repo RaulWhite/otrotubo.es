@@ -36,18 +36,13 @@ if(is_uploaded_file($_FILES['video']['tmp_name'])
 } 
 
 $duration = getDuration($_FILES['video']['tmp_name']);
-foreach ($duration as $time) {
-  if($time == "N/A" || $time == "")
-    continue;
-
-  if($time > 900){
-    echo json_encode(array(
-      "mensaje" => "El vídeo dura más de 15 minutos",
-      "success" => false
-      )
-    );
-    exit();
-  }
+if($duration > 900){
+  echo json_encode(array(
+    "mensaje" => "El vídeo dura más de 15 minutos",
+    "success" => false
+    )
+  );
+  exit();
 }
 
 // Información del vídeo
@@ -100,8 +95,7 @@ $resu = $con->query("INSERT INTO `videos` "
   .(is_null($videoDesc)?"NULL":"'".$con->real_escape_string($videoDesc)."'").", '"
   .$con->real_escape_string("queued")."', "
   .$con->real_escape_string(
-    (isset($_POST["videoPublic"]) && $_POST["videoPublic"] == "on")
-    ?"TRUE":"FALSE").", '"
+    isset($_POST["videoPublic"])?"TRUE":"FALSE").", '"
   .$con->real_escape_string(date("Y-m-d H:i:s"))."', '"
   .$con->real_escape_string($_SESSION["logedUser"]->getNick())."')");
 

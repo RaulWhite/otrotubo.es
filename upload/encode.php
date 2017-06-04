@@ -68,9 +68,12 @@ if($return_var !== 0){
   if(is_file($tmp720)){unlink($tmp720);}
   // Indicar error en la BD
   writeStateToBD("error");
-} else 
-  // Si todo ha ido bien, el vídeo está lista para visualizarse
+} else {
+  // Si todo ha ido bien, se crean las miniaturas y se etiqueta el vídeo
+  // como listo para visualizarse
+  createThumbnails($idVideo);
   writeStateToBD("ready");
+}
 
 endScript(true);
 
@@ -80,7 +83,7 @@ function writeStateToBD($estado){
   global $isHD;
   global $idVideo;
   $con->query("UPDATE `videos` SET estado = '$estado'"
-    .((isset($isHD))?", isHD = $isHD":" ")
+    .((isset($isHD))?", isHD = ".($isHD?"true":"false"):"")
     ." WHERE idVideo = '".$con->real_escape_string($idVideo)."'");
 }
 
