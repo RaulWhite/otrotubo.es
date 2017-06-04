@@ -7,11 +7,16 @@
   }
 }
 
-/* Estilo de navbar en móvil */
 .navbar-cabecera {
   border-radius: 0;
   border: none;
   margin-bottom: 0;
+}
+
+.navbar-cabecera img.userAvatar {
+  max-width: 40px;
+  max-height: 40px;
+  margin: -12px 0 -12px -12px;
 }
 
 /* Eliminar lineas extra de bloques en móvil */

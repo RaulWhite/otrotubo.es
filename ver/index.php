@@ -19,7 +19,8 @@ $con = new mysqli(
 );
 $con->set_charset("utf8");
 
-$resu = $con->query("SELECT * FROM videos WHERE idVideo = '"
+$resu = $con->query("SELECT v.*, u.avatar, u.email FROM videos v JOIN usuarios u "
+  ."ON (v.usuarios_nick = u.nick) WHERE idVideo = '"
   .$con->real_escape_string($idVideo)."'");
 
 if(!$resu)
@@ -50,6 +51,28 @@ switch ($infoVideo["estado"]) {
 }
 
 getHeader(htmlentities($infoVideo["titulo"]));
+
+if(is_null($infoVideo["avatar"])){
+  $emailMD5 = md5($infoVideo["email"]);
+  $avatar = "https://gravatar.com/avatar/$emailMD5?d=retro";
+} else {
+  $blob = $infoVideo["avatar"];
+  $JPEG = "\xFF\xD8\xFF";
+  $GIF  = "GIF";
+  $PNG  = "\x89\x50\x4e\x47\x0d\x0a\x1a\x0a";
+  $BMP  = "BM";
+  if(strpos($blob, $JPEG) !== false)
+    $dataImage = "data:image/jpeg;base64,";
+  else if(strpos($blob, $GIF) !== false)
+    $dataImage = "data:image/gif;base64,";
+  else if(strpos($blob, $PNG) !== false)
+    $dataImage = "data:image/png;base64,";
+  else if(strpos($blob, $BMP) !== false)
+    $dataImage = "data:image/bmp;base64,";
+
+  if (isset($dataImage))
+    $avatar = $dataImage.base64_encode($blob);
+}
 ?>
 
 <script src="/ver/playerCode.js"></script>
@@ -72,6 +95,20 @@ getHeader(htmlentities($infoVideo["titulo"]));
     </div>
     <div class="col-lg-5 col-md-3 col-sm-12 col-xs-12 info-col info-narrow">
       <h3><?php echo htmlentities($infoVideo["titulo"]) ?></h3>
+      <h5>
+        <a class="userLink" href=<?php echo "'/users/".$infoVideo["usuarios_nick"]."'" ?>>
+          <img class="userAvatar" src=<?php echo "'$avatar'" ?>>
+        </a>
+        <div style="display:inline-block; vertical-align:bottom">
+          <a class="userLink" href=<?php echo "'/users/".$infoVideo["usuarios_nick"]."'" ?>>
+            <?php echo htmlentities($infoVideo["usuarios_nick"]) ?>
+          </a>
+          <br><br>Subido el 
+          <?php echo htmlentities(
+            date('d/m/Y - H:i',strtotime($infoVideo["fechaSubida"]))
+          )?>
+        </div>
+      </h5>
       <p class="collapsed text-justify">
         <?php echo htmlentities($infoVideo["descripcion"]) ?>
       </p>
@@ -85,6 +122,20 @@ getHeader(htmlentities($infoVideo["titulo"]));
   <div class="row">
     <div class="col-xs-12 info-col info-wide" style="display:none">
       <h3><?php echo htmlentities($infoVideo["titulo"]) ?></h3>
+      <h5>
+        <a class="userLink" href=<?php echo "'/users/".$infoVideo["usuarios_nick"]."'" ?>>
+          <img class="userAvatar" src=<?php echo "'$avatar'" ?>>
+        </a>
+        <div style="display:inline-block; vertical-align:bottom">
+          <a class="userLink" href=<?php echo "'/users/".$infoVideo["usuarios_nick"]."'" ?>>
+            <?php echo htmlentities($infoVideo["usuarios_nick"]) ?>
+          </a>
+          <br><br>Subido el 
+          <?php echo htmlentities(
+            date('d/m/Y - H:i',strtotime($infoVideo["fechaSubida"]))
+          )?>
+        </div>
+      </h5>
       <p class="collapsed text-justify">
         <?php echo htmlentities($infoVideo["descripcion"]) ?>
       </p>

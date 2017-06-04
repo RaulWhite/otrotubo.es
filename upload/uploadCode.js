@@ -37,13 +37,15 @@ $(document).ready(function() {
         ($("#video")[0].files[0] === undefined));
     }
     // Se vacían y se habilitan los campos del formulario
-    $("#submitInline span.btn").attr("disabled", false);
-    $("input#videoTitle").val("");
-    $("input#videoTitle").attr("disabled", false);
-    $("input#videoPublic").val("");
-    $("input#videoPublic").attr("disabled", false);
-    $("textarea#videoDesc").val("");
-    $("textarea#videoDesc").attr("disabled", false);
+    if($("input#videoTitle").attr("disabled") == "disabled"){
+      $("#submitInline span.btn").attr("disabled", false);
+      $("input#videoTitle").val("");
+      $("input#videoTitle").attr("disabled", false);
+      $("input#videoPublic").val("");
+      $("input#videoPublic").attr("disabled", false);
+      $("textarea#videoDesc").val("");
+      $("textarea#videoDesc").attr("disabled", false);
+    }
   });
 
   $('#submitVideoForm').ajaxForm({

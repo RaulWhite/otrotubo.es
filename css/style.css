@@ -5,20 +5,24 @@
 
 /* Lista vídeo home */
 
-.homeItem a {
+.videoListItem a {
   text-decoration: none;
 }
 
-.homeItem p {
+.videoListItem h3, .videoListItem h5 {
+  font-weight: bold;
+}
+
+.videoListItem p {
   max-height: 4.25em;
   overflow: hidden;
 }
 
-.homeItem:not(:last-child){
+.videoListItem:not(:last-child){
   border-bottom: 1px solid #AAA;
 }
 
-.homeItem .videoThumbs{
+.videoListItem .videoThumbs{
   margin: 20px auto;
   background-color: grey;
   background-size: cover;
@@ -59,6 +63,20 @@ video#player {
   .wideVideo video#player {
     max-height: 90vh !important;
   }
+}
+
+.video-container .row h3,
+.video-container .row h5 {
+  font-weight: bold;
+}
+
+.video-container .userAvatar {
+  max-width: 80px;
+  max-height: 80px;
+}
+
+.video-container a.userLink {
+  text-decoration: none;
 }
 
 .container-fluid.video-container,

@@ -193,11 +193,31 @@ function getHeader($tituloHeader){ ?>
                 $logedUser = $_SESSION['logedUser'] ?>
                 <li class="dropdown loged-dropdown">
                   <a class="dropdown-toggle" data-toggle="dropdown" href="#">
-                    <?php if($logedUser->getAvatar() != null) { ?>
+                    <?php if($logedUser->getAvatar() != null) { 
+                      $blob = $logedUser->getAvatar();
+                      $JPEG = "\xFF\xD8\xFF";
+                      $GIF  = "GIF";
+                      $PNG  = "\x89\x50\x4e\x47\x0d\x0a\x1a\x0a";
+                      $BMP  = "BM";
+                      if(strpos($blob, $JPEG) !== false)
+                        $dataImage = "data:image/jpeg;base64,";
+                      else if(strpos($blob, $GIF) !== false)
+                        $dataImage = "data:image/gif;base64,";
+                      else if(strpos($blob, $PNG) !== false)
+                        $dataImage = "data:image/png;base64,";
+                      else if(strpos($blob, $BMP) !== false)
+                        $dataImage = "data:image/bmp;base64,";
+
+                      if (isset($dataImage)){ ?>
+                        <img class="userAvatar" 
+                        src=<?php echo "\"$dataImage".base64_encode($logedUser->getAvatar())."\"" ?>>
+                      <?php }
+                    } else { 
+                      $emailMD5 = md5($logedUser->getEmail()) ?>
                       <img class="userAvatar" 
-                      src=<?php echo "\"".$logedUser->getAvatar()."\"" ?>>
-                    <?php } ?>
-                    <?php echo htmlentities($logedUser->getNick()); ?>
+                        src=<?php echo "https://gravatar.com/avatar/$emailMD5?d=retro" ?>>
+                    <?php } 
+                    echo htmlentities($logedUser->getNick()); ?>
                     <span class="caret"></span>
                   </a>
                   <ul class="dropdown-menu">

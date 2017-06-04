@@ -36,16 +36,18 @@ if(!$resu || $resu->num_rows == 0){ ?>
 ?>
 <script src="/thumbsCode.js"></script>
 <h2 class="text-center">Últimos vídeos subidos</h2>
-<div class="container homeList">
+<div class="container videoList">
   <?php
   while ($video = $resu->fetch_assoc()){ ?>
-    <div class="row homeItem">
+    <div class="row videoListItem">
       <div class="col-lg-3 col-md-4 col-sm-5 col-xs-12 text-center">
-        <div class="videoThumbs"
-        style=<?php echo "'background-image:url("
-          ."\"/videos/thumbs/".$video["idVideo"].".jpg\")'"
-        ?>>
-        </div>
+        <a href=<?php echo "'/ver?video=".$video["idVideo"]."'" ?>>
+          <div class="videoThumbs"
+          style=<?php echo "'background-image:url("
+            ."\"/videos/thumbs/".$video["idVideo"].".jpg\")'"
+          ?>>
+          </div>
+        </a>
       </div>
       <div class="col-lg-9 col-md-8 col-sm-7 col-xs-12">
         <a href=<?php echo "'/ver?video=".$video["idVideo"]."'" ?>>
