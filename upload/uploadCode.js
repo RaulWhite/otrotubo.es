@@ -36,6 +36,14 @@ $(document).ready(function() {
       $("#submitInline span.btn").attr("disabled",
         ($("#video")[0].files[0] === undefined));
     }
+    // Se vacían y se habilitan los campos del formulario
+    $("#submitInline span.btn").attr("disabled", false);
+    $("input#videoTitle").val("");
+    $("input#videoTitle").attr("disabled", false);
+    $("input#videoPublic").val("");
+    $("input#videoPublic").attr("disabled", false);
+    $("textarea#videoDesc").val("");
+    $("textarea#videoDesc").attr("disabled", false);
   });
 
   $('#submitVideoForm').ajaxForm({
@@ -50,9 +58,12 @@ $(document).ready(function() {
       $("#progresoSubida").slideDown();
       percentBar.removeClass("progress-bar-success progress-bar-danger "
       +"progress-bar-warning");
-      // Deshabilitar botón de subida
+      // Deshabilitar formulario
       $("#submit").enable(false);
       $("#submitInline span.btn").attr("disabled", true);
+      $("input#videoTitle").attr("disabled", true);
+      $("input#videoPublic").attr("disabled", true);
+      $("textarea#videoDesc").attr("disabled", true);
       // Ocultar alert de aviso
       aviso.slideUp(function(){
         aviso.empty();

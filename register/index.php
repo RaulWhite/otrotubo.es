@@ -54,7 +54,7 @@ if(isset($_POST["registrarse"]) && $passedCaptcha){
     $bdCred['db']
   );
   $con->set_charset("utf8");
-  $con->query("INSERT INTO `usuarios`"
+  $resu = $con->query("INSERT INTO `usuarios`"
     ."(`nick`, `pass`, `email`, `nombre`, `avatar`, `bio`, `fechaRegistro`, `tipo`)"
     ."VALUES('"
     .$con->real_escape_string($tmpUser->getNick())."', '"
@@ -66,12 +66,30 @@ if(isset($_POST["registrarse"]) && $passedCaptcha){
     .$con->real_escape_string($tmpUser->getFechaReg())."', '"
     .$con->real_escape_string($tmpUser->getTipo())."')");
   $con->close();
-}
 
-printForm();
+// Notificar si...
+?>
+<div class="text-center alertVideoWrapper">
+  <?php if(!$resu){ // ha fallado el registro en la BD ?>
+    <div class="alert alertVideo alert-danger" style="display: inline-block">
+      <h3>Error en la base de datos al registrarse</h3>
+    </div>
+  <?php } else { // todo ha salido bien ?>
+    <div class="alert alertVideo alert-success" style="display: inline-block">
+      <h3>Se ha registrado correctamente</h3>
+      <p>Inicie sesión para empezar a usar el resto de funciones de la plataforma</p>
+    </div>
+  <?php } ?>
+</div>
+<?php // No ha pasado el captcha
+} else if(isset($_POST["registrarse"]) && !$passedCaptcha){ ?>
+  <div class="text-center alertVideoWrapper">
+    <div class="alert alertVideo alert-warning" style="display: inline-block">
+      <h3>No ha pasado el Captcha</h3>
+    </div>
+  </div>
 
-// Imprimir formulario de registro, con librerías JS
-function printForm(){
+<?php  // Si no hay petición, imprimir formulario
+} else if (!isset($_POST["registrarse"]))
   require_once("registerForm.html");
-}
 ?>

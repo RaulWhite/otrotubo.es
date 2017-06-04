@@ -7,6 +7,14 @@
 method="POST" enctype="multipart/form-data" class="form">
   <div class="container">
     <div class="row">
+      <div class="col-lg-10 col-lg-push-1 col-md-12 col-sm-12 col-xs-12">
+        <div class="alert alert-warning text-center">
+          Por favor, rellene los campos (si lo desea) antes de subir el vídeo,
+          ya que los datos se guardaran al comenzar la subida.
+        </div>
+      </div>
+    </div>
+    <div class="row">
       <div class="col-lg-10 col-lg-push-1 col-md-12 col-sm-12 hidden-xs">
         <label for="video">
           Vídeo: <span class="text-danger">
@@ -16,7 +24,7 @@ method="POST" enctype="multipart/form-data" class="form">
         <div class="form-group">
           <div class="input-group">
             <label class="input-group-btn">
-              <span class="btn btn-primary">
+              <span class="btn btn-primary selectVideoBtn">
                   Seleccionar
                   <input type="file" accept="video/*"
                   id="video" name="video" style="display:none">
@@ -78,7 +86,10 @@ method="POST" enctype="multipart/form-data" class="form">
       <div class="col-lg-10 col-lg-push-1 col-md-12 col-sm-12">
         <div class="form-group">
           <label for="videoTitle">
-            Título del vídeo: (si no se indica, se usará el nombre del archivo)
+            Título del vídeo 
+            <span style="font-weight:normal">
+              (si no se indica, se usará el nombre del archivo)
+            </span>
           </label>
           <input type="text" class="form-control"
           id="videoTitle" name="videoTitle" placeholder="Título del vídeo">
@@ -91,7 +102,7 @@ method="POST" enctype="multipart/form-data" class="form">
           <div class="container-fluid publicToggle">
             <div class="row">
               <div class="col-lg-2 col-md-2 col-sm-3 col-xs-12">
-                <label for="videoPublic">Publicar vídeo: </label>
+                <label for="videoPublic">Publicar vídeo </label>
               </div>
               <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12">
                 <label class="switch-light" onclick="">
@@ -115,7 +126,10 @@ method="POST" enctype="multipart/form-data" class="form">
     <div class="row">
       <div class="col-lg-10 col-lg-push-1 col-md-12 col-sm-12">
         <div class="form-group">
-          <label for="videoDesc">Descripción del vídeo:</label>
+          <label for="videoDesc">
+            Descripción del vídeo 
+            <span style="font-weight:normal">(opcional)</span>
+          </label>
           <textarea class="form-control" rows="5"
           id="videoDesc" name="videoDesc" style="resize: vertical"
           placeholder="Descripción del vídeo"></textarea>

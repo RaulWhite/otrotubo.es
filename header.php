@@ -22,6 +22,8 @@ function getHeader($tituloHeader){ ?>
       <meta http-equiv="X-UA-Compatible" content="ie=edge">
       <meta name="theme-color" content="#DB0000">
       <meta name="msapplication-TileColor" content="#DB0000">
+      <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+      <link rel="icon" href="/favicon.ico" type="image/x-icon">
 
       <!-- http://browser-update.org/ - Código JS para detectar navegadores desactualizados -->
       <script> 
