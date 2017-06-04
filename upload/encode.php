@@ -5,16 +5,9 @@ require_once("encodeFunctions.php");
 // Ruta del servidor web, ya que este es un script que se ejecuta por terminal.
 $webServerRoot = "/var/www/html/otrotubo";
 
-// Archivo ini con las credenciales para acceder a la BD.
-// Se encuentra en la carpeta superior a la raíz de la página.
-$bdCred = parse_ini_file(dirname($webServerRoot)."/mysqlcon.ini");
-$con = new mysqli(
-  "localhost",
-  $bdCred['dbuser'],
-  $bdCred['dbpass'],
-  $bdCred['db']
-);
-$con->set_charset("utf8");
+// Crear conexión con la BD
+require_once($_SERVER['DOCUMENT_ROOT']."/mysqlicon.php");
+$con = dbCon();
 
 // Si hay un vídeo procesandose en otra instancia del código
 $resu = $con->query("SELECT idVideo FROM `videos` WHERE estado = 'encoding'");

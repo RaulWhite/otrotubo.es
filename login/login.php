@@ -1,8 +1,4 @@
 <?php
-// Archivo ini con las credenciales para acceder a la BD.
-// Se encuentra en la carpeta superior a la raíz de la página.
-$bdCred = parse_ini_file(dirname($_SERVER['DOCUMENT_ROOT'])."/mysqlcon.ini");
-
 if(isset($_POST['loginRequest']) && !isset($_SESSION['isLoged'])){
   login();
 }
@@ -23,14 +19,11 @@ function login(){ // Función para hacer el login
 
   $nick = $_POST['nick'];
   $pass = $_POST['pass'];
-  global $bdCred;
-  $con = new mysqli(
-    "localhost",
-    $bdCred['dbuser'],
-    $bdCred['dbpass'],
-    $bdCred['db']
-  );
-  $con->set_charset("utf8");
+
+  // Crear conexión con la BD
+  require_once($_SERVER['DOCUMENT_ROOT']."/mysqlicon.php");
+  $con = dbCon();
+
   $nickParsed = $con->real_escape_string(trim($nick));
   $resu = $con->query(
     "SELECT `nick`, `pass` FROM `usuarios`

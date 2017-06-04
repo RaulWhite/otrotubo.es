@@ -8,16 +8,9 @@ if (!isset($idVideo)){ ?>
   <?php die();
 }
 
-// Archivo ini con las credenciales para acceder a la BD.
-// Se encuentra en la carpeta superior a la raíz de la página.
-$bdCred = parse_ini_file(dirname($_SERVER['DOCUMENT_ROOT'])."/mysqlcon.ini");
-$con = new mysqli(
-  "localhost",
-  $bdCred['dbuser'],
-  $bdCred['dbpass'],
-  $bdCred['db']
-);
-$con->set_charset("utf8");
+// Crear conexión con la BD
+require_once($_SERVER['DOCUMENT_ROOT']."/mysqlicon.php");
+$con = dbCon();
 
 $resu = $con->query("SELECT v.*, u.avatar, u.email FROM videos v JOIN usuarios u "
   ."ON (v.usuarios_nick = u.nick) WHERE idVideo = '"

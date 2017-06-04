@@ -179,7 +179,10 @@ function getHeader($tituloHeader){ ?>
           <div class="collapse navbar-collapse" id="nav-menu">
             <form class="navbar-form navbar-left" role="search">
               <div class="input-group">
-                <input type="text" class="form-control" placeholder="Buscar">
+                <?php $busqueda = (isset($_GET["buscar"]))?($_GET["buscar"]):"" ?>
+                <input type="text" id="buscar" name="buscar"
+                class="form-control" placeholder="Buscar"
+                value=<?php echo "'".htmlentities($busqueda)."'" ?>>
                 <span class="input-group-btn">
                   <button type="submit" class="btn btn-default btn-danger">
                     <i class="fa fa-search"></i>

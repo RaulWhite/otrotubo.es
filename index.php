@@ -2,19 +2,25 @@
 require_once($_SERVER['DOCUMENT_ROOT']."/header.php"); 
 getHeader("Inicio");
 
-// Archivo ini con las credenciales para acceder a la BD.
-// Se encuentra en la carpeta superior a la raíz de la página.
-$bdCred = parse_ini_file(dirname($_SERVER['DOCUMENT_ROOT'])."/mysqlcon.ini");
-$con = new mysqli(
-  "localhost",
-  $bdCred['dbuser'],
-  $bdCred['dbpass'],
-  $bdCred['db']
-);
-$con->set_charset("utf8");
+// Crear conexión con la BD
+require_once($_SERVER['DOCUMENT_ROOT']."/mysqlicon.php");
+$con = dbCon();
 
-$resu = $con->query("SELECT * FROM `videos` WHERE public = TRUE
-  AND estado = 'ready' ORDER BY fechaSubida DESC LIMIT 10");
+// Si se ha pedido búsqueda
+if(isset($_GET["buscar"])){
+  // Comprobar que no haya espacios vacíos
+  $_GET["buscar"] = trim($_GET["buscar"]);
+  // Si solo eran espacios, se cancela la búsqueda
+  if(empty($_GET["buscar"]))
+    unset($_GET["buscar"]);
+  $query = "SELECT * FROM `videos` WHERE public = TRUE AND titulo LIKE "
+    ."'%".$con->real_escape_string($_GET["buscar"])."%' "
+    ."AND estado = 'ready' ORDER BY fechaSubida DESC LIMIT 10";
+} else
+  $query = "SELECT * FROM `videos` WHERE public = TRUE
+  AND estado = 'ready' ORDER BY fechaSubida DESC LIMIT 10";
+
+$resu = $con->query($query);
 if(!$resu || $resu->num_rows == 0){ ?>
   <div class="text-center alertVideoWrapper">
   <?php if(!$resu) { ?>
@@ -23,7 +29,11 @@ if(!$resu || $resu->num_rows == 0){ ?>
     </div>
   <?php } else if($resu->num_rows == 0){ ?>
     <div class="alert alert-warning" style="display: inline-block">
+    <?php if(isset($_GET["buscar"])){ ?>
+      <h3>No se han encontrado vídeos con la búsqueda</h3>
+    <?php } else { ?>
       <h3>No hay vídeos públicos en la plataforma 😕</h3>
+    <?php } ?>
     </div>
   </div>
     </body>
@@ -35,7 +45,13 @@ if(!$resu || $resu->num_rows == 0){ ?>
 
 ?>
 <script src="/thumbsCode.js"></script>
-<h2 class="text-center">Últimos vídeos subidos</h2>
+<?php if(isset($_GET["buscar"])){ ?>
+  <h2 class="text-center">
+    Resultados de búsqueda: "<?php echo htmlentities($_GET["buscar"]) ?>"
+  </h2>
+<?php } else { ?>
+  <h2 class="text-center">Últimos vídeos subidos</h2>
+<?php } ?>
 <div class="container videoList">
   <?php
   while ($video = $resu->fetch_assoc()){ ?>

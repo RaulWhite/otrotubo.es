@@ -44,16 +44,9 @@ if(isset($_POST["registrarse"]) && $passedCaptcha){
     $tmpUser->setAvatar(base64_decode($_POST["avatarBase64"]));
   }
 
-  // Archivo ini con las credenciales para acceder a la BD.
-  // Se encuentra en la carpeta superior a la raíz de la página.
-  $bdCred = parse_ini_file(dirname($_SERVER['DOCUMENT_ROOT'])."/mysqlcon.ini");
-  $con = new mysqli(
-    "localhost",
-    $bdCred['dbuser'],
-    $bdCred['dbpass'],
-    $bdCred['db']
-  );
-  $con->set_charset("utf8");
+  // Crear conexión con la BD
+  require_once($_SERVER['DOCUMENT_ROOT']."/mysqlicon.php");
+  $con = dbCon();
   $resu = $con->query("INSERT INTO `usuarios`"
     ."(`nick`, `pass`, `email`, `nombre`, `avatar`, `bio`, `fechaRegistro`, `tipo`)"
     ."VALUES('"
