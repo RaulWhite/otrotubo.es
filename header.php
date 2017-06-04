@@ -195,7 +195,7 @@ function getHeader($tituloHeader){ ?>
                       <img class="userAvatar" 
                       src=<?php echo "\"".$logedUser->getAvatar()."\"" ?>>
                     <?php } ?>
-                    <?php echo $logedUser->getNick(); ?>
+                    <?php echo htmlentities($logedUser->getNick()); ?>
                     <span class="caret"></span>
                   </a>
                   <ul class="dropdown-menu">

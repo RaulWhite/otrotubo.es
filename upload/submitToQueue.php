@@ -4,6 +4,8 @@ require_once($_SERVER["DOCUMENT_ROOT"]."/login/claseUsuario.php");
 // Archivo con funciones de ayuda para la codificación
 require_once($_SERVER["DOCUMENT_ROOT"]."/upload/encodeFunctions.php");
 
+$webServerRoot = $_SERVER["DOCUMENT_ROOT"];
+
 session_start();
 
 if(is_uploaded_file($_FILES['video']['tmp_name'])
@@ -23,6 +25,29 @@ if(is_uploaded_file($_FILES['video']['tmp_name'])
     )
   );
   exit();
+} else if($_FILES['video']['size'] > 2147483648){
+  // El archivo es de más de 2GB
+  echo json_encode(array(
+    "mensaje" => "El archivo es demasiado grande (Máximo admitido: 2GB)",
+    "success" => false
+    )
+  );
+  exit();
+} 
+
+$duration = getDuration($_FILES['video']['tmp_name']);
+foreach ($duration as $time) {
+  if($time == "N/A" || $time == "")
+    continue;
+
+  if($time > 900){
+    echo json_encode(array(
+      "mensaje" => "El vídeo dura más de 15 minutos",
+      "success" => false
+      )
+    );
+    exit();
+  }
 }
 
 // Información del vídeo
@@ -91,6 +116,7 @@ if($resu){
   // Ejecutar codificador en PHP
   pclose(popen("php ".$_SERVER["DOCUMENT_ROOT"]."/upload/encode.php &","r"));
 } else {
+  unlink($tempVideo);
   echo json_encode(array(
     "mensaje" => "Error en la base de datos",
     "success" => false

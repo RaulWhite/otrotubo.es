@@ -35,24 +35,41 @@ function getFPS($videoFile) {
 // Convertir
 function convert($resolution, $tmpVideo, $idVideo){
   global $webServerRoot;
+  // Calcular si se pone de máximo altura o anchura
+  $videoRes = getResolution($tmpVideo);
+  $heightIsMaximum = ($videoRes[1]/($videoRes[0]/640) > 360);
+  if($heightIsMaximum)
+    $scale = "-2:$resolution";
+  else
+    $scale = (($resolution == 360)?"640":"1280").":-2";
+  $scale = "scale=".$scale;
   // Obtener FPS para codificar el vídeo
   $videoFPS = getFPS($tmpVideo);
   $output = array();
   $return_var = -1;
   exec($webServerRoot."/sh/codificar"
     .$resolution."p.sh"." \"".$tmpVideo."\" \"".$idVideo."\""
-    ." \"".$videoFPS."\" \"".$webServerRoot."\"",
+    ." \"".$videoFPS."\" \"".$webServerRoot."\" \"".$scale."\"",
     $output, $return_var);
 
   return $return_var;
 }
 
-// Comprobador de resolución HD
-function checkIfHD($videoFile){
+// Obtener duración del vídeo
+function getDuration($videoFile){
+  global $webServerRoot;
+  $output = shell_exec("bash ".$webServerRoot."/sh/getDuration.sh"
+    ." \"".$videoFile."\"");
+  $videoRes = explode("\n", $output);
+  return $videoRes;
+}
+
+// Obtener resolución
+function getResolution($videoFile){
   global $webServerRoot;
   $output = shell_exec("bash ".$webServerRoot."/sh/getResolution.sh"
     ." \"".$videoFile."\"");
   $videoRes = explode("\n", $output);
-  return ($videoRes[0] >= 1280 || $videoRes[1] >= 720);
+  return $videoRes;
 }
 ?>

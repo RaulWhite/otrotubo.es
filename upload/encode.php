@@ -47,9 +47,14 @@ writeStateToBD("encoding");
 $return_var = convert(360, $tmpVideo, $idVideo);
 
 // Si no ha habido errores, y el vídeo original es HD, codificar en 720p
-$isHD = checkIfHD($tmpVideo);
-if($return_var === 0 && $isHD)
-  $return_var = convert(720, $tmpVideo, $idVideo);
+$videoRes = getResolution($tmpVideo);
+if($return_var === 0){
+  if ($videoRes[0] >= 1280 || $videoRes[1] >= 720){
+    $return_var = convert(720, $tmpVideo, $idVideo);
+    $isHD = true;
+  } else 
+    $isHD = false;
+}
 
 // Borrar archivo original
 unlink($tmpVideo);

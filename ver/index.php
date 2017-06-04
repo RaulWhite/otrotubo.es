@@ -49,7 +49,7 @@ switch ($infoVideo["estado"]) {
     break;
 }
 
-getHeader($infoVideo["titulo"]);
+getHeader(htmlentities($infoVideo["titulo"]));
 ?>
 
 <script src="/ver/playerCode.js"></script>
@@ -71,9 +71,9 @@ getHeader($infoVideo["titulo"]);
       <button id="wSelector" class="btn btn-danger">Modo cine</button>
     </div>
     <div class="col-lg-5 col-md-3 col-sm-12 col-xs-12 info-col info-narrow">
-      <h3><?php echo $infoVideo["titulo"] ?></h3>
+      <h3><?php echo htmlentities($infoVideo["titulo"]) ?></h3>
       <p class="collapsed text-justify">
-        <?php echo $infoVideo["descripcion"] ?>
+        <?php echo htmlentities($infoVideo["descripcion"]) ?>
       </p>
       <button class="readMoreDesc readMoreNarrow btn btn-default btn-sm btn-info btn-block"
       style="display:none">Leer más</button>
@@ -84,9 +84,9 @@ getHeader($infoVideo["titulo"]);
 <div class="container">
   <div class="row">
     <div class="col-xs-12 info-col info-wide" style="display:none">
-      <h3><?php echo $infoVideo["titulo"] ?></h3>
+      <h3><?php echo htmlentities($infoVideo["titulo"]) ?></h3>
       <p class="collapsed text-justify">
-        <?php echo $infoVideo["descripcion"] ?>
+        <?php echo htmlentities($infoVideo["descripcion"]) ?>
       </p>
       <button class="readMoreDesc readMoreWide btn btn-default btn-sm btn-info btn-block"
       style="display:none">Leer más</button>
@@ -112,6 +112,7 @@ function videoNotAvailable($message, $severe = false){
   </div>
   <?php
   echo "</body></html>";
+  global $con;
   $con->close();
   exit();
 }

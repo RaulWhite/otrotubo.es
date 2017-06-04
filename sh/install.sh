@@ -1,5 +1,11 @@
 #!/bin/bash
 
+# Comprobar ROOT
+if [ "$(id -u)" != "0" ]; then
+	echo "Para instalar FFMPEG debe ser root"
+	exit 1
+fi
+
 # Instalar dependencias desde repos oficiales del sistema
 sudo apt-get update
 sudo apt-get -y install autoconf automake build-essential libass-dev \

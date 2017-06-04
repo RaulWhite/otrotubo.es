@@ -14,7 +14,7 @@ $con = new mysqli(
 $con->set_charset("utf8");
 
 $resu = $con->query("SELECT * FROM `videos` WHERE public = TRUE
-  ORDER BY fechaSubida DESC LIMIT 10");
+  AND estado = 'ready' ORDER BY fechaSubida DESC LIMIT 10");
 if(!$resu || $resu->num_rows == 0){ ?>
   <div class="text-center alertVideoWrapper">
   <?php if(!$resu) { ?>
@@ -41,9 +41,13 @@ if(!$resu || $resu->num_rows == 0){ ?>
     <div class="row homeItem">
       <div class="col-xs-12">
         <a href=<?php echo "'/ver?video=".$video["idVideo"]."'" ?>>
-          <h3 class="text-justify"><?php echo $video["titulo"] ?></h3>
-          <h5><?php echo $video["usuarios_nick"] ?></h5>
-          <p class="text-justify"><?php echo $video["descripcion"] ?></p>
+          <h3 class="text-justify">
+            <?php echo htmlentities($video["titulo"]) ?>
+          </h3>
+          <h5><?php echo htmlentities($video["usuarios_nick"]) ?></h5>
+          <p class="text-justify">
+            <?php echo htmlentities($video["descripcion"]) ?>
+          </p>
         </a>
       </div>
     </div>
