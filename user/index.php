@@ -73,6 +73,14 @@ if(is_null($userReq->getAvatar())){
     $avatar = $dataImage.base64_encode($blob);
 }
 
+// Variable de paginación
+if(isset($_GET["pag"]) && is_numeric($_GET["pag"])){
+  $pagina = floor($_GET["pag"]);
+  if($pagina <= 0)
+    $pagina = 1;
+} else
+  $pagina = 1;
+
 // Cargar código JS para las miniaturas si hay vídeos que mostrar en la lista
 if($videosResu->num_rows > 0){ ?>
   <script src="/thumbsCode.js"></script>
@@ -114,38 +122,78 @@ if($videosResu->num_rows > 0){ ?>
           if(($userReq->getNick())===($logedUserNick)){ ?>
             <h3>Todavía no has subido vídeos</h3>
           <?php } else { ?>
-            <h3>Este usuarios todavía no ha publicado vídeos</h3>
+            <h3>Este usuario todavía no ha publicado vídeos</h3>
           <?php } ?>
           </div>
         <?php } else if ($videosResu->num_rows > 0){
-          while($video = $videosResu->fetch_assoc()){ ?>
-            <div class="row videoListItem">
-              <div class="col-lg-4 col-md-5 col-sm-6 col-xs-12">
-                <a href=<?php echo "'/ver?video=".$video["idVideo"]."'" ?>>
-                  <div class="videoThumbs"
-                  style=<?php echo "'background-image:url("
-                    ."\"/videos/thumbs/".$video["idVideo"].".jpg\")'"
-                  ?>>
-                  </div>
-                </a>
+          // Se empieza por -1 para que al primer pase sea 0
+          $i = -1;
+          // Si la página solicitada es mayor que el número de páginas posibles,
+          // no entra en el bucle
+          if(!((($pagina-1)*5)+1 > $videosResu->num_rows)){
+            while ($video = $videosResu->fetch_assoc()){
+              // Contar página
+              $i++;
+              // Si la página solicitada no contiene todavía este listado, continue
+              if($i < (($pagina-1)*5))
+                continue;
+              // Si la página ya tiene los listados solicitados, break
+              else if($i >= ($pagina*5))
+                break;
+              ?>
+              <div class="row videoListItem">
+                <div class="col-lg-4 col-md-5 col-sm-6 col-xs-12">
+                  <a href=<?php echo "'/ver?video=".$video["idVideo"]."'" ?>>
+                    <div class="videoThumbs"
+                    style=<?php echo "'background-image:url("
+                      ."\"/videos/thumbs/".$video["idVideo"].".jpg\")'"
+                    ?>>
+                    </div>
+                  </a>
+                </div>
+                <div class="col-lg-8 col-md-7 col-sm-6 col-xs-12">
+                  <a href=<?php echo "'/ver?video=".$video["idVideo"]."'" ?>>
+                    <h3 class="text-justify">
+                      <?php echo htmlentities($video["titulo"]) ?>
+                      <?php if($video["public"] == 0){ ?>
+                        <small>Vídeo oculto</small>
+                      <?php } ?>
+                    </h3>
+                    <h5><?php echo htmlentities($video["usuarios_nick"]) ?></h5>
+                    <p class="text-justify">
+                      <?php echo htmlentities($video["descripcion"]) ?>
+                    </p>
+                  </a>
+                </div>
               </div>
-              <div class="col-lg-8 col-md-7 col-sm-6 col-xs-12">
-                <a href=<?php echo "'/ver?video=".$video["idVideo"]."'" ?>>
-                  <h3 class="text-justify">
-                    <?php echo htmlentities($video["titulo"]) ?>
-                    <?php if($video["public"] == 0){ ?>
-                      <small>Vídeo oculto</small>
-                    <?php } ?>
-                  </h3>
-                  <h5><?php echo htmlentities($video["usuarios_nick"]) ?></h5>
-                  <p class="text-justify">
-                    <?php echo htmlentities($video["descripcion"]) ?>
-                  </p>
-                </a>
-              </div>
+            <?php }
+          }
+        }
+        // Mostrar módulo de paginación si hay para más de una página
+        if($videosResu->num_rows > 5){ ?>
+          <div class="row paginacion">
+            <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
+              <?php
+              // Mostrar botón de página anterior si no se está en la primera página
+              if(isset($pagina) && $pagina > 1){
+                echo "<a href='/u/".$userReq->getNick()."/".($pagina-1)."'>
+                    <button class='btn btn-default btn-danger'>&lt;- Anterior</button>
+                  </a>";
+              }
+              ?>
             </div>
-          <?php }
-        } ?>
+            <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6 text-right">
+              <?php
+              // Mostrar botón página siguiente si no se está en la última página posible
+              if(isset($pagina) && $pagina < (($videosResu->num_rows)/5)){
+                echo "<a href='/u/".$userReq->getNick()."/".($pagina+1)."'>
+                    <button class='btn btn-default btn-danger'>Siguiente -&gt;</button>
+                  </a>";
+              }
+              ?>
+            </div>
+          </div>
+        <?php } ?>
       </div>
     </div>
   </div>

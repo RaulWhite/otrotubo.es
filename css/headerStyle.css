@@ -51,6 +51,17 @@
     }
 }
 
+/* Alert de login incorrecto */
+.alertFlotante {
+  position: absolute;
+  right: 20px;
+  top: 54px;
+}
+
+.alertFlotante h4 {
+  margin: 0;
+}
+
 /* Colores del header (autogenerado con TWBSColor) */
 .navbar-default {
   background: #db0000;

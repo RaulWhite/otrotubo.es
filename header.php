@@ -273,7 +273,28 @@ function getHeader($tituloHeader){ ?>
           </div>
         </div>
       </nav>
+      <?php
+      // Error en login      
+      if(isset($_SESSION["errorLogin"])){ ?>
+        <script>
+          $(document).ready(function(){
+            setTimeout(function() {
+              $(".alertFlotante").slideDown();
+            }, 250);
+            setTimeout(function() {
+              $(".alertFlotante").slideUp();
+            }, 5250);
+          });
+        </script>
+        <div class="alert alert-danger alertFlotante" style="display:none">
+          <h4><?php echo $_SESSION["errorLogin"] ?></h4>
+        </div>
+        <?php // Una vez mostrado el mensaje, se elimina de la sesión
+        $_SESSION["errorLogin"] = null;
+        unset($_POST);
+      } ?>
       <div class="alertNotComp" style="display:none">
+        <!-- Mensaje de navegador no compatible con H.264 -->
         <div class="alert alert-danger">
           <p>
             Su navegador no es compatible con vídeos codificados en h.264,

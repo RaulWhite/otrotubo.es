@@ -9,11 +9,16 @@ if(isset($_POST['logoutRequest']) && isset($_SESSION['isLoged'])){
   $_SESSION['isLoged'] = false;
 }
 
+// Recargar la página para evitar reenvío de formulario
+header("Refresh:0");
+// Ecit para evitar ejecición de código y perder mensajes de error, si hay
+exit();
+
 function login(){ // Función para hacer el login
   if(empty($_POST['nick'])){ // nick vacío
-    $_SESSION['errorLogin'] = "<p>Por favor, introduzca el usuario</p>";
+    $_SESSION['errorLogin'] = "Por favor, introduzca el usuario";
   } else if (empty($_POST['pass'])){ // Contraseña vacía
-    $_SESSION['errorLogin'] = "<p>Por favor, introduzca la contraseña</p>";
+    $_SESSION['errorLogin'] = "Por favor, introduzca la contraseña";
     return;
   }
 
@@ -30,12 +35,13 @@ function login(){ // Función para hacer el login
     WHERE `nick` = '$nickParsed' OR `email` = '$nickParsed'"
   );
 
+  // Si la query ha fallado
+  if(!$resu){
+    $_SESSION['errorLogin'] = "Error en la base de datos";
   // Si la query no ha devuelto nada (no hay usuario con ese nick o email)
-  if(!($fila = $resu->fetch_row())){
-    $_SESSION['errorLogin'] = "<p>Usuario no encontrado</p>";
-  // Si las contraseñas codificadas no coinciden
-  } else if (!(password_verify($pass, $fila[1]))){
-    $_SESSION['errorLogin'] = "<p>Contraseña incorrecta</p>";
+  // o las contraseñas codificadas no se verifican entre sí
+  } else if(!($fila = $resu->fetch_row()) || !(password_verify($pass, $fila[1]))){
+    $_SESSION['errorLogin'] = "Usuario y/o contraseña incorrectos";
   // Sino, el login es válido
   } else {
     $_SESSION['errorLogin'] = null;
