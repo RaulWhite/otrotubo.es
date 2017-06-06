@@ -31,6 +31,10 @@
   height: calc(225px * 9 / 16);
 }
 
+.row.paginacion {
+  padding: 20px 0;
+}
+
 /* FIN Lista vídeo home */
 
 /* Reproductor */
@@ -198,3 +202,30 @@ img.tmpAvatar{
 }
 
 /* FIN Formulario subida vídeo */
+
+/* Página perfil usuario */
+
+.userPage .leftUser h3{
+  font-weight: bold;
+}
+
+.userPage .leftUser h4{
+  font-style: italic;
+}
+
+.userPage .leftUser .bio p.collapsed {
+  max-height: 6em;
+  overflow: hidden;
+}
+
+.userPage .rightUser {
+  overflow: auto;
+}
+
+@media (min-width: 768px){
+  .userPage .leftUser{
+    margin-top: 20px;
+  }
+}
+
+/* FIN Página perfil usuario */

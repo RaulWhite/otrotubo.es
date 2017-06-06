@@ -55,11 +55,11 @@ function setLogedUserObject($con, $nickParsed){ // Función para crear el objeto
     );
     if($fila = $resu->fetch_row()){
       $actual = new Usuario();
-      $actual->setNick($fila[0]);
+      $actual->setNick(htmlentities($fila[0]));
       $actual->setEmail($fila[1]);
-      $actual->setNombre($fila[2]);
+      $actual->setNombre(htmlentities($fila[2]));
       $actual->setAvatar($fila[3]);
-      $actual->setBio($fila[4]);
+      $actual->setBio(htmlentities($fila[4]));
       $actual->setFechaReg($fila[5]);
       $actual->setTipo($fila[6]);
       $_SESSION['logedUser'] = $actual;

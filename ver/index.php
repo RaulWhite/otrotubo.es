@@ -89,11 +89,11 @@ if(is_null($infoVideo["avatar"])){
     <div class="col-lg-5 col-md-3 col-sm-12 col-xs-12 info-col info-narrow">
       <h3><?php echo htmlentities($infoVideo["titulo"]) ?></h3>
       <h5>
-        <a class="userLink" href=<?php echo "'/users/".$infoVideo["usuarios_nick"]."'" ?>>
+        <a class="userLink" href=<?php echo "'/u/".$infoVideo["usuarios_nick"]."'" ?>>
           <img class="userAvatar" src=<?php echo "'$avatar'" ?>>
         </a>
         <div style="display:inline-block; vertical-align:bottom">
-          <a class="userLink" href=<?php echo "'/users/".$infoVideo["usuarios_nick"]."'" ?>>
+          <a class="userLink" href=<?php echo "'/u/".$infoVideo["usuarios_nick"]."'" ?>>
             <?php echo htmlentities($infoVideo["usuarios_nick"]) ?>
           </a>
           <br><br>Subido el 
@@ -116,17 +116,15 @@ if(is_null($infoVideo["avatar"])){
     <div class="col-xs-12 info-col info-wide" style="display:none">
       <h3><?php echo htmlentities($infoVideo["titulo"]) ?></h3>
       <h5>
-        <a class="userLink" href=<?php echo "'/users/".$infoVideo["usuarios_nick"]."'" ?>>
+        <a class="userLink" href=<?php echo "'/u/".$infoVideo["usuarios_nick"]."'" ?>>
           <img class="userAvatar" src=<?php echo "'$avatar'" ?>>
         </a>
         <div style="display:inline-block; vertical-align:bottom">
-          <a class="userLink" href=<?php echo "'/users/".$infoVideo["usuarios_nick"]."'" ?>>
+          <a class="userLink" href=<?php echo "'/u/".$infoVideo["usuarios_nick"]."'" ?>>
             <?php echo htmlentities($infoVideo["usuarios_nick"]) ?>
           </a>
           <br><br>Subido el 
-          <?php echo htmlentities(
-            date('d/m/Y - H:i',strtotime($infoVideo["fechaSubida"]))
-          )?>
+          <?php echo date('d/m/Y - H:i',strtotime($infoVideo["fechaSubida"])) ?>
         </div>
       </h5>
       <p class="collapsed text-justify">

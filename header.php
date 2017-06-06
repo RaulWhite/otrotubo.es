@@ -177,7 +177,7 @@ function getHeader($tituloHeader){ ?>
             </a>
           </div>
           <div class="collapse navbar-collapse" id="nav-menu">
-            <form class="navbar-form navbar-left" role="search">
+            <form class="navbar-form navbar-left" role="search" action="/">
               <div class="input-group">
                 <?php $busqueda = (isset($_GET["buscar"]))?($_GET["buscar"]):"" ?>
                 <input type="text" id="buscar" name="buscar"
@@ -224,16 +224,10 @@ function getHeader($tituloHeader){ ?>
                     <span class="caret"></span>
                   </a>
                   <ul class="dropdown-menu">
-                    <li><a href="/perfil">
+                    <li><a href=<?php echo "/u/".htmlentities($logedUser->getNick()) ?>>
                       <button
                       class="btn btn-default btn-danger btn-block profileDropButton">
                         Mi perfil
-                      </button>
-                    </a></li>
-                    <li><a href="/myVideos">
-                      <button
-                      class="btn btn-default btn-danger btn-block profileDropButton">
-                        Mis vídeos
                       </button>
                     </a></li>
                     <li><a>

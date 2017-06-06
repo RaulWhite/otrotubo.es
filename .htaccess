@@ -7,6 +7,7 @@ RewriteBase /
 DirectorySlash Off
 RewriteRule ^(.*)\/(\?.*)?$ $1$2 [R=301,L]
 RewriteRule ^([\w\/-]+)(\?.*)?$ $1/index.php$2 [L,T=application/x-httpd-php]
+RewriteRule ^u/(.+)/index.php user?user=$1
 
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d

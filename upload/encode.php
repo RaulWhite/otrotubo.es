@@ -6,7 +6,7 @@ require_once("encodeFunctions.php");
 $webServerRoot = "/var/www/html/otrotubo";
 
 // Crear conexión con la BD
-require_once($_SERVER['DOCUMENT_ROOT']."/mysqlicon.php");
+require_once($webServerRoot."/mysqlicon.php");
 $con = dbCon();
 
 // Si hay un vídeo procesandose en otra instancia del código
