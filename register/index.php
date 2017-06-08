@@ -36,7 +36,6 @@ if(isset($_POST["registrarse"]) && $passedCaptcha){
   $tmpUser->setEmail(trim($_POST["email"]));
   $tmpUser->setBio((trim($_POST["bio"]) != "")?trim($_POST["bio"]):null); 
   $tmpUser->setFechaReg(date("Y-m-d"));
-  $tmpUser->setTipo("registered");
 
   if(isset($_POST["avatarBase64"])
   && isset($_POST["usingGravatar"])
@@ -48,7 +47,7 @@ if(isset($_POST["registrarse"]) && $passedCaptcha){
   require_once($_SERVER['DOCUMENT_ROOT']."/mysqlicon.php");
   $con = dbCon();
   $resu = $con->query("INSERT INTO `usuarios`"
-    ."(`nick`, `pass`, `email`, `nombre`, `avatar`, `bio`, `fechaRegistro`, `tipo`)"
+    ."(`nick`, `pass`, `email`, `nombre`, `avatar`, `bio`, `fechaRegistro`)"
     ."VALUES('"
     .$con->real_escape_string($tmpUser->getNick())."', '"
     .$con->real_escape_string(password_hash($_POST['pass'], PASSWORD_DEFAULT))."', '"
@@ -56,8 +55,7 @@ if(isset($_POST["registrarse"]) && $passedCaptcha){
     .($tmpUser->getNombre()!=""?("'".$con->real_escape_string($tmpUser->getNombre())."'"):"NULL").", "
     .($tmpUser->getAvatar()!=""?("'".$con->real_escape_string($tmpUser->getAvatar())."'"):"NULL").", "
     .($tmpUser->getBio()!=""?("'".$con->real_escape_string($tmpUser->getBio())."'"):"NULL").", '"
-    .$con->real_escape_string($tmpUser->getFechaReg())."', '"
-    .$con->real_escape_string($tmpUser->getTipo())."')");
+    .$con->real_escape_string($tmpUser->getFechaReg())."')");
   $con->close();
 
 // Notificar si...

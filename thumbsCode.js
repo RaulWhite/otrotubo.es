@@ -12,8 +12,8 @@ $(document).ready(function(){
 });
 
 function scrollThumb(i, element) {
-  if(i == 12)
-    i = 0;
+  if(i == 0)
+    i = 12;
   element.css("background-position-x", (225*i)+"px");
-  scrollTOut = setTimeout(scrollThumb, 750, i + 1, element);
+  scrollTOut = setTimeout(scrollThumb, 750, i - 1, element);
 }

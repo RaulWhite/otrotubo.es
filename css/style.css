@@ -132,6 +132,14 @@ video#player {
   }
 }
 
+.videoPlayerExtra {
+  padding: 0;
+}
+
+.videoPlayerExtra button {
+  margin-bottom: 8px;
+}
+
 /* FIN Reproductor */
 
 /* Formulario registro */

@@ -46,8 +46,8 @@ if(isset($_SESSION["isLoged"]) && $_SESSION["isLoged"]){
 
 // Query de vídeos del usuario
 $videosResu = $con->query("SELECT * FROM videos WHERE usuarios_nick = '"
-  .$con->real_escape_string($userReq->getNick())."' AND estado = 'ready' "
-  .(($userReq->getNick())===($logedUserNick)?"":"AND public = true ")
+  .$con->real_escape_string($userReq->getNick())."' "
+  .(($userReq->getNick())===($logedUserNick)?"":"AND estado = 'ready' AND public = true ")
   ."ORDER BY fechaSubida DESC");
 
 // Avatar del usuario
@@ -155,8 +155,16 @@ if($videosResu->num_rows > 0){ ?>
                   <a href=<?php echo "'/ver?video=".$video["idVideo"]."'" ?>>
                     <h3 class="text-justify">
                       <?php echo htmlentities($video["titulo"]) ?>
-                      <?php if($video["public"] == 0){ ?>
+                      <?php if($video["estado"] == "ready" && $video["public"] == 0){ ?>
                         <small>Vídeo oculto</small>
+                      <?php } else if($video["estado"] == "error") { ?>
+                        <small style="color: #a94442">Error de codificiación</small>
+                      <?php } else if($video["estado"] == "queued") { ?>
+                        <small style="color: #8a6d3b">En cola de proceso</small>
+                      <?php } else if($video["estado"] == "encoding") { ?>
+                        <small style="color: #8a6d3b">Procesando</small>
+                      <?php } else if($video["estado"] == "deleted") { ?>
+                        <small style="color: #a94442">Eliminado</small>
                       <?php } ?>
                     </h3>
                     <h5><?php echo htmlentities($video["usuarios_nick"]) ?></h5>

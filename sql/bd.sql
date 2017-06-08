@@ -10,7 +10,6 @@ CREATE TABLE IF NOT EXISTS `otrotubo`.`usuarios` (
   `avatar` MEDIUMBLOB NULL,
   `bio` TEXT NULL,
   `fechaRegistro` DATE NOT NULL,
-  `tipo` VARCHAR(20) NOT NULL DEFAULT 'registered',
   PRIMARY KEY (`nick`))
 ENGINE = InnoDB;
 
