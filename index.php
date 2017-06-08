@@ -21,9 +21,10 @@ if(isset($_GET["buscar"])){
   // Si solo eran espacios, se cancela la búsqueda
   if(empty($_GET["buscar"]))
     unset($_GET["buscar"]);
-  $query = "SELECT * FROM `videos` WHERE public = TRUE AND titulo LIKE "
-    ."'%".$con->real_escape_string($_GET["buscar"])."%' "
-    ."AND estado = 'ready' ORDER BY fechaSubida DESC";
+  $query = "SELECT * FROM `videos` WHERE "
+    ."(titulo LIKE '%".$con->real_escape_string($_GET["buscar"])."%' "
+    ."OR usuarios_nick LIKE '%".$con->real_escape_string($_GET["buscar"])."%') "
+    ."AND public = TRUE AND estado = 'ready' ORDER BY fechaSubida DESC";
 } else
   $query = "SELECT * FROM `videos` WHERE public = TRUE
   AND estado = 'ready' ORDER BY fechaSubida DESC";
@@ -94,11 +95,13 @@ if(!$resu || $resu->num_rows == 0){ ?>
             <h3 class="text-justify">
               <?php echo htmlentities($video["titulo"]) ?>
             </h3>
-            <h5><?php echo htmlentities($video["usuarios_nick"]) ?></h5>
-            <p class="text-justify">
-              <?php echo htmlentities($video["descripcion"]) ?>
-            </p>
           </a>
+          <a href=<?php echo "'/u/".$video["usuarios_nick"]."'" ?>>
+            <h5><?php echo htmlentities($video["usuarios_nick"]) ?></h5>
+          </a>
+          <p class="text-justify">
+            <?php echo htmlentities($video["descripcion"]) ?>
+          </p>
         </div>
       </div>
   <?php }

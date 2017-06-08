@@ -70,16 +70,20 @@ video#player {
 }
 
 .video-container .row h3,
-.video-container .row h5 {
+.video-container .row h5,
+.video-container-2 .row h3,
+.video-container-2 .row h5 {
   font-weight: bold;
 }
 
-.video-container .userAvatar {
+.video-container .userAvatar,
+.video-container-2 .userAvatar {
   max-width: 80px;
   max-height: 80px;
 }
 
-.video-container a.userLink {
+.video-container a.userLink,
+.video-container-2 a.userLink {
   text-decoration: none;
 }
 
@@ -237,3 +241,12 @@ img.tmpAvatar{
 }
 
 /* FIN Página perfil usuario */
+
+/* Página 404 */
+
+.page404 .img404 {
+  max-width: 400px;
+  margin: auto;
+}
+
+/* FIN Página 404 */

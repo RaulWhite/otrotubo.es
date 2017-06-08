@@ -167,11 +167,11 @@ if($videosResu->num_rows > 0){ ?>
                         <small style="color: #a94442">Eliminado</small>
                       <?php } ?>
                     </h3>
-                    <h5><?php echo htmlentities($video["usuarios_nick"]) ?></h5>
-                    <p class="text-justify">
-                      <?php echo htmlentities($video["descripcion"]) ?>
-                    </p>
                   </a>
+                  <h5><?php echo htmlentities($video["usuarios_nick"]) ?></h5>
+                  <p class="text-justify">
+                    <?php echo htmlentities($video["descripcion"]) ?>
+                  </p>
                 </div>
               </div>
             <?php }

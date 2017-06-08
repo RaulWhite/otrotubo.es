@@ -159,7 +159,13 @@ if(is_null($infoVideo["avatar"])){
       </div>
     </div>
     <div class="col-lg-5 col-md-3 col-sm-12 col-xs-12 info-col info-narrow">
-      <h3><?php echo htmlentities($infoVideo["titulo"]) ?></h3>
+      <h3>
+        <?php echo htmlentities($infoVideo["titulo"]) ?>
+        <?php if($infoVideo["public"] == 0){ ?>
+          <br>
+          <small>Vídeo oculto</small>
+        <?php } ?>
+      </h3>
       <h5>
         <a class="userLink" href=<?php echo "'/u/".$infoVideo["usuarios_nick"]."'" ?>>
           <img class="userAvatar" src=<?php echo "'$avatar'" ?>>
@@ -183,10 +189,16 @@ if(is_null($infoVideo["avatar"])){
   </div>
 </div>
 
-<div class="video-container container">
+<div class="video-container-2 container">
   <div class="row">
     <div class="col-xs-12 info-col info-wide" style="display:none">
-      <h3><?php echo htmlentities($infoVideo["titulo"]) ?></h3>
+      <h3>
+        <?php echo htmlentities($infoVideo["titulo"]) ?>
+        <?php if($infoVideo["public"] == 0){ ?>
+          <br>
+          <small>Vídeo oculto</small>
+        <?php } ?>
+      </h3>
       <h5>
         <a class="userLink" href=<?php echo "'/u/".$infoVideo["usuarios_nick"]."'" ?>>
           <img class="userAvatar" src=<?php echo "'$avatar'" ?>>
