@@ -36,9 +36,9 @@ if(isset($_POST["editConfirm"])
   $newPublic = isset($_POST["newPublic"])?"TRUE":"FALSE";
 
   $updateResu = $con->query("UPDATE `videos` SET "
-    ."titulo = '".$con->real_escape_String($newTitle)."', "
-    ."descripcion = '".$con->real_escape_String($newDesc)."', "
-    ."public = ".$con->real_escape_String($newPublic)." "
+    ."titulo = '".$con->real_escape_string($newTitle)."', "
+    ."descripcion = '".$con->real_escape_string($newDesc)."', "
+    ."public = ".$con->real_escape_string($newPublic)." "
     ."WHERE idVideo = '".$con->real_escape_string($infoVideo["idVideo"])."'");
 
   // Si la modificación ha salido bien, se recarga para evitar reenvío de formulario
@@ -98,7 +98,27 @@ switch ($infoVideo["estado"]) {
 
 getHeader(htmlentities($infoVideo["titulo"]));
 
-if(is_null($infoVideo["avatar"])){
+// Si se ha publicado un comentario
+if(isset($_POST["newComment"]) && (trim($_POST["newComment"]) != "")
+&& isset($_SESSION["isLoged"]) && $_SESSION["isLoged"]){
+  $postCommentResu = $con->query("INSERT INTO comentarios (`idComentario`, "
+  ."`texto`, `fechaComentario`, `usuarios_nick`, `videos_idVideo`) VALUES('"
+  ."0', '"
+  .$con->real_escape_string(trim($_POST["newComment"]))."', '"
+  .$con->real_escape_string(date("Y-m-d H:i:s"))."', '"
+  .$con->real_escape_string($_SESSION["logedUser"]->getNick())."', '"
+  .$con->real_escape_string($infoVideo["idVideo"])."')");
+
+  // Borrar variable y recargar la página para evitar reenvío de formulario
+  unset($_POST["newComment"]); ?>
+  <script>
+    var url = window.location.href;
+    window.location.replace(url);
+  </script>
+<?php exit();
+} ?>
+
+<?php if(is_null($infoVideo["avatar"])){
   $emailMD5 = md5($infoVideo["email"]);
   $avatar = "https://gravatar.com/avatar/$emailMD5?d=retro";
 } else {
@@ -218,6 +238,110 @@ if(is_null($infoVideo["avatar"])){
       style="display:none">Leer más</button>
     </div>
   </div>
+</div>
+
+<hr>
+<!-- Módulo de comentarios -->
+<div class="container comments-container">
+  <div class="row">
+    <div class="col-md-10 col-md-push-1 col-xs-12">
+      <h3>Comentarios en este vídeo:</h3>
+    </div>
+  </div>
+  <?php if(isset($_SESSION["isLoged"]) && $_SESSION["isLoged"]){ ?>
+    <div class="row">
+      <div class="col-md-10 col-md-push-1 col-xs-12">
+        <form id="commentForm" class="form" method="POST"
+        action=<?php echo "/ver?video=".$infoVideo["idVideo"] ?>>
+          <div class="form-group">
+            <label for="newComment">Escribir comentario: </label>
+            <textarea id="newComment" name="newComment" style="resize: vertical"
+            class="form-control" required></textarea>
+          </div>
+          <input type="submit" class="btn btn-default btn-primary pull-right"
+          id="postComment" name="postComment" value="Comentar">
+        </form>
+      </div>
+    </div>
+  <?php } else { ?>
+    <div class="row">
+      <div class="col-md-10 col-md-push-1 col-xs-12">
+        <div class="text-center">
+          Inicia sesión para poder comentar en este vídeo.
+        </div>
+      </div>
+    </div>
+  <?php }
+
+  $commentsResu = $con->query(
+    "SELECT c.texto, c.fechaComentario, c.usuarios_nick, u.avatar "
+    ."FROM comentarios c JOIN usuarios u ON (c.usuarios_nick = u.nick) "
+    ."WHERE videos_idVideo = '".$con->real_escape_string($infoVideo["idVideo"])."' "
+    ."ORDER BY fechaComentario DESC"
+  );
+
+  if($commentsResu && $commentsResu->num_rows > 0){
+    while($comment = $commentsResu->fetch_assoc()){ 
+    $cNick = htmlentities($comment["usuarios_nick"]); 
+    if(is_null($comment["avatar"])){
+      $cEmailMD5 = md5($infoVideo["email"]);
+      $cAvatar = "https://gravatar.com/avatar/$cEmailMD5?d=retro&s=56";
+    } else {
+      $blob = $comment["avatar"];
+      $JPEG = "\xFF\xD8\xFF";
+      $GIF  = "GIF";
+      $PNG  = "\x89\x50\x4e\x47\x0d\x0a\x1a\x0a";
+      $BMP  = "BM";
+      if(strpos($blob, $JPEG) !== false)
+        $dataImage = "data:image/jpeg;base64,";
+      else if(strpos($blob, $GIF) !== false)
+        $dataImage = "data:image/gif;base64,";
+      else if(strpos($blob, $PNG) !== false)
+        $dataImage = "data:image/png;base64,";
+      else if(strpos($blob, $BMP) !== false)
+        $dataImage = "data:image/bmp;base64,";
+
+      if (isset($dataImage))
+        $cAvatar = $dataImage.base64_encode($blob);
+    } ?>
+      <hr>
+      <div class="row">
+        <div class="col-md-10 col-md-push-1 col-xs-12">
+          <div class="container-fluid commentListItem">
+            <div class="row">
+              <div class="col-sm-4 col-xs-12">
+                <h5>
+                  <a class="userLink" href=<?php echo "'/u/$cNick'" ?>>
+                    <img class="commentAvatar" src=<?php echo "'$cAvatar'" ?>>
+                  </a>
+                  <div style="display:inline-block; vertical-align:bottom">
+                    <a class="userLink" href=<?php echo "'/u/$cNick'" ?>><?php echo $cNick ?></a>
+                    <br>
+                    Comentó el <br>
+                    <?php echo htmlentities(
+                      date('d/m/Y - H:i',strtotime($comment["fechaComentario"]))
+                    ) ?>
+                </h5>
+              </div>
+              <div class="col-sm-8 col-xs-12">
+                <p><?php echo htmlentities($comment["texto"]) ?></p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    <?php }
+  } else { ?>
+    <hr>
+      <div class="row">
+        <div class="col-md-10 col-md-push-1 col-xs-12">
+          <div class="container-fluid text-center">
+            Todavía no se han escrito comentarios en este vídeo.
+          </div>
+        </div>
+      </div>
+    </div>
+  <?php } ?>
 </div>
 
 <?php // Modal de edición de datos del vídeo

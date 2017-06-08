@@ -32,7 +32,7 @@ CREATE TABLE IF NOT EXISTS `otrotubo`.`videos` (
 ENGINE = InnoDB;
 
 CREATE TABLE IF NOT EXISTS `otrotubo`.`comentarios` (
-  `idComentario` INT NOT NULL,
+  `idComentario` INT NOT NULL AUTO_INCREMENT,
   `texto` TEXT NOT NULL,
   `fechaComentario` DATETIME NOT NULL,
   `usuarios_nick` VARCHAR(30) NOT NULL,

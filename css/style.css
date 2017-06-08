@@ -144,6 +144,12 @@ video#player {
   margin-bottom: 8px;
 }
 
+/* Comentarios */
+.comments-container .commentAvatar {
+  max-width: 56px;
+  max-height: 56px;
+}
+
 /* FIN Reproductor */
 
 /* Formulario registro */
@@ -245,7 +251,7 @@ img.tmpAvatar{
 /* Página 404 */
 
 .page404 .img404 {
-  max-width: 400px;
+  width: 400px;
   margin: auto;
 }
 

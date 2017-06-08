@@ -145,10 +145,12 @@ if($videosResu->num_rows > 0){ ?>
                 <div class="col-lg-4 col-md-5 col-sm-6 col-xs-12">
                   <a href=<?php echo "'/ver?video=".$video["idVideo"]."'" ?>>
                     <div class="videoThumbs"
-                    style=<?php echo "'background-image:url("
-                      ."\"/videos/thumbs/".$video["idVideo"].".jpg\")'"
-                    ?>>
-                    </div>
+                      <?php if(is_file($_SERVER["DOCUMENT_ROOT"]
+                        ."/videos/thumbs/".$video["idVideo"].".jpg")){
+                        echo "style='background-image:url("
+                          ."\"/videos/thumbs/".$video["idVideo"].".jpg\")'";
+                      } ?>
+                    ></div>
                   </a>
                 </div>
                 <div class="col-lg-8 col-md-7 col-sm-6 col-xs-12">

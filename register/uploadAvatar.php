@@ -32,12 +32,14 @@ if(is_uploaded_file($image['tmp_name'])
     $imagick->writeImage($newTempImg);
   // Si es gif, escala los cuadros por separado y los vuelve a unir
   } else {
-    $imagick = $original->coalesceImages();
-    foreach ($imagick as $frame) { 
-      $frame->scaleImage(500,500,true);
+    if($imgSize[0] > 500 || $imgSize[1] > 500){
+      $imagick = $original->coalesceImages();
+      foreach ($imagick as $frame) { 
+        $frame->scaleImage(500,500,true);
+      }
+      $imagick = $imagick->deconstructImages();
+      $imagick->writeImages($newTempImg, true);
     }
-    $imagick = $imagick->deconstructImages();
-    $imagick->writeImages($newTempImg, true);
   }
   // Convertir a base64
   $extension = pathinfo(

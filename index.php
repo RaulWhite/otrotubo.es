@@ -84,10 +84,12 @@ if(!$resu || $resu->num_rows == 0){ ?>
         <div class="col-lg-3 col-md-4 col-sm-5 col-xs-12 text-center">
           <a href=<?php echo "'/ver?video=".$video["idVideo"]."'" ?>>
             <div class="videoThumbs"
-            style=<?php echo "'background-image:url("
-              ."\"/videos/thumbs/".$video["idVideo"].".jpg\")'"
-            ?>>
-            </div>
+              <?php if(is_file($_SERVER["DOCUMENT_ROOT"]
+                ."/videos/thumbs/".$video["idVideo"].".jpg")){
+                echo "style='background-image:url("
+                  ."\"/videos/thumbs/".$video["idVideo"].".jpg\")'";
+              } ?>
+            ></div>
           </a>
         </div>
         <div class="col-lg-9 col-md-8 col-sm-7 col-xs-12">
