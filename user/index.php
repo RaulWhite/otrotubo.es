@@ -37,6 +37,49 @@ if(!($fila = $resu->fetch_row())){
 // Pedir cabecera con título de página como nombre del usuario (o nick)
 getHeader(is_null($userReq->getNombre())?$userReq->getNick():$userReq->getNombre());
 
+// Si se ha pedido modificar el perfil
+if(isset($_SESSION["isLoged"]) && $_SESSION["isLoged"]
+&& $_SESSION["logedUser"]->getNick() == $userReq->getNick()
+&& isset($_POST["editConfirm"])){
+  $editProfileResu = $con->query("UPDATE usuarios SET "
+    ."nombre = ".((isset($_POST["newName"])&&($_POST["newName"]!=""))
+      ?("'".$con->real_escape_string($_POST["newName"])."'"):"NULL").", "
+    ."bio = ".((isset($_POST["newBio"])&&($_POST["newBio"]!=""))
+      ?("'".$con->real_escape_string($_POST["newBio"])."'"):"NULL").", "
+    ."avatar = ".((isset($_POST["avatarBase64"])&&($_POST["avatarBase64"]!=""))
+      ?("'".$con->real_escape_string(base64_decode($_POST["avatarBase64"]))
+      ."'"):"NULL")." "
+    ."WHERE nick = '".$con->real_escape_string($_SESSION["logedUser"]->getNick())."'");
+
+  // Si todo ha salido bien, recargar la información de la sesión de usuario
+  if($editProfileResu){
+    $nickParsed = $con->real_escape_string($_SESSION["logedUser"]->getNick());
+    $loginResu = $con->query(
+      "SELECT `nick`, `email`, `nombre`, `avatar`, `bio`, `fechaRegistro`, `tipo`
+      FROM `usuarios`
+      WHERE `nick` = '$nickParsed' OR email = '$nickParsed'"
+    );
+    if($fila = $loginResu->fetch_row()){
+      $actual = new Usuario();
+      $actual->setNick(htmlentities($fila[0]));
+      $actual->setEmail($fila[1]);
+      $actual->setNombre(htmlentities($fila[2]));
+      $actual->setAvatar($fila[3]);
+      $actual->setBio(htmlentities($fila[4]));
+      $actual->setFechaReg($fila[5]);
+      $actual->setTipo($fila[6]);
+      $_SESSION['logedUser'] = $actual;
+    }
+  }
+
+  // Borrar variable y recargar la página para evitar reenvío de formulario
+  unset($_POST["editConfirm"]); ?>
+  <script>
+    var url = window.location.href;
+    window.location.replace(url);
+  </script>
+<?php }
+
 // Nick de usuario logueado
 if(isset($_SESSION["isLoged"]) && $_SESSION["isLoged"]){
   $logedUserNick = $_SESSION["logedUser"]->getNick();
@@ -108,6 +151,11 @@ if($videosResu->num_rows > 0){ ?>
           <button class="readMoreBio btn btn-default btn-sm btn-info btn-block"
           style="display:none">Leer más</button>
         </div>
+      <?php }
+      if(isset($_SESSION["isLoged"]) && $_SESSION["isLoged"]
+      && $userReq->getNick() == $_SESSION["logedUser"]->getNick()){ ?>
+        <button id="editProfileButton" class="btn btn-default btn-block btn-danger"
+        data-toggle="modal" data-target="#editProfileModal">Editar perfil</button>
       <?php } ?>
     </div>
     <div class="col-lg-9 col-md-8 col-sm-8 col-xs-12 rightUser">
@@ -209,6 +257,76 @@ if($videosResu->num_rows > 0){ ?>
   </div>
 </div>
 
+<?php
+// Modal de edición de perfil
+if(isset($_SESSION["isLoged"]) && $_SESSION["isLoged"]
+&& $userReq->getNick() == $_SESSION["logedUser"]->getNick()){ ?>
+  <div id="editProfileModal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title">Editar perfil</h4>
+        </div>
+        <form id="editProfile" method="POST" class="form">
+          <div class="modal-body">
+            <div class="form-group">
+              <label>Nombre: </label>
+              <input type="text" id="newName" name="newName" class="form-control"
+              value=<?php echo "'".$_SESSION["logedUser"]->getNombre()."'" ?>>
+            </div>
+            <div class="form-group">
+              <label>Descripción: </label>
+              <textarea type="text" id="newBio" name="newBio" rows="5" style="resize: vertical"
+              class="form-control"><?php echo $_SESSION["logedUser"]->getBio() ?></textarea>
+            </div>
+            <div class="imgBlock">
+              <div class="form-group">
+                <label for="avatar">
+                  Avatar: <span class="text-danger">(Máximo 2MB)</span>
+                </label>
+                <div class="input-group">
+                  <label class="input-group-btn">
+                    <span class="btn btn-primary">
+                      Seleccionar
+                      <input type="file" accept="image/*"
+                      id="avatar" name="avatar" style="display:none">
+                    </span>
+                  </label>
+                  <input type="text" class="form-control"
+                  id="tmpFileName" name="tmpFileName"
+                  value="Ningún archivo seleccionado" disabled>
+                </div>
+                <div class="alert" id="alertIMG" style="display:none"></div>
+                <button id="useGravatar"
+                class="btn btn-default btn-info" style="display:none">
+                  Usar avatar de <strong>Gravatar</strong>
+                </button>
+                <div class="imgProcessing" style="display: none">
+                  <i class="fa fa-refresh fa-5x imgProcessing"></i>
+                </div>
+                <img class="text-center tmpAvatar img-responsive">
+                <script>
+                  var usingGravatar = 
+                    <?php echo is_null($_SESSION["logedUser"]->getAvatar())?"true":"false" ?>;
+                  var emailMD5 =
+                    <?php echo "'".md5($_SESSION["logedUser"]->getEmail())."'" ?>
+                </script>
+                <script src="/user/editAvatarCode.js"></script>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button class="btn btn-default btn-danger pull-left"
+            data-dismiss="modal">Cancelar</button>
+            <input type="submit" class="btn btn-default btn-primary pull-right"
+            id="editConfirm" name="editConfirm" value="Aceptar">
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+<?php } ?>
 <?php $con->close() ?>
 
   </body>
