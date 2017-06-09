@@ -368,7 +368,7 @@ if(isset($_POST["likeThis"]) || isset($_POST["dislikeThis"])){
   <?php }
 
   $commentsResu = $con->query(
-    "SELECT c.texto, c.fechaComentario, c.usuarios_nick, u.avatar "
+    "SELECT c.texto, c.fechaComentario, c.usuarios_nick, u.avatar, u.email "
     ."FROM comentarios c JOIN usuarios u ON (c.usuarios_nick = u.nick) "
     ."WHERE videos_idVideo = '".$con->real_escape_string($infoVideo["idVideo"])."' "
     ."ORDER BY fechaComentario DESC"
@@ -378,7 +378,7 @@ if(isset($_POST["likeThis"]) || isset($_POST["dislikeThis"])){
     while($comment = $commentsResu->fetch_assoc()){ 
     $cNick = htmlentities($comment["usuarios_nick"]); 
     if(is_null($comment["avatar"])){
-      $cEmailMD5 = md5($infoVideo["email"]);
+      $cEmailMD5 = md5($comment["email"]);
       $cAvatar = "https://gravatar.com/avatar/$cEmailMD5?d=retro&s=56";
     } else {
       $blob = $comment["avatar"];
