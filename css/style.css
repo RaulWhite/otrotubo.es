@@ -150,6 +150,16 @@ video#player {
   max-height: 56px;
 }
 
+/* Likes */
+.likesModule {
+  font-size: 2em;
+  margin: 20px 0;
+}
+
+.likesModule .likesCount{
+  margin-right: 20px;
+}
+
 /* FIN Reproductor */
 
 /* Formulario registro */

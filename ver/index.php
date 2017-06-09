@@ -118,7 +118,8 @@ if(isset($_POST["newComment"]) && (trim($_POST["newComment"]) != "")
 <?php exit();
 } ?>
 
-<?php if(is_null($infoVideo["avatar"])){
+<?php // Avatar del usuario que ha subido el vídeo
+if(is_null($infoVideo["avatar"])){
   $emailMD5 = md5($infoVideo["email"]);
   $avatar = "https://gravatar.com/avatar/$emailMD5?d=retro";
 } else {
@@ -139,8 +140,64 @@ if(isset($_POST["newComment"]) && (trim($_POST["newComment"]) != "")
   if (isset($dataImage))
     $avatar = $dataImage.base64_encode($blob);
 }
-?>
 
+// Contador de likes/dislikes
+$likesResu = $con->query("SELECT SUM(gusto = 1) AS likes, "
+  ."SUM(gusto = 0) AS dislikes FROM likes WHERE videos_idVideo = '"
+  .$con->real_escape_string($infoVideo["idVideo"])."'");
+
+if($likesResu && ($likesRow = $likesResu->fetch_assoc())){
+  $nLikes = (is_null($likesRow["likes"]))?"0":$likesRow["likes"];
+  $nDislikes = (is_null($likesRow["dislikes"]))?"0":$likesRow["dislikes"];
+}
+
+// Cargar like/dislike del usuario logueado
+if(isset($_SESSION["isLoged"]) && $_SESSION["isLoged"]){
+  $ownLikeResu = $con->query("SELECT gusto FROM likes "
+  ."WHERE videos_idVideo = '".$con->real_escape_string($infoVideo["idVideo"])
+  ."' AND usuarios_nick = '"
+  .$con->real_escape_string($_SESSION["logedUser"]->getNick())."'");
+
+  if($ownLikeResu && $ownLikeResu->num_rows > 0){
+    $didVote = true;
+    $voted = ($ownLikeResu->fetch_assoc())["gusto"];
+  } else {
+    $didVote = false;
+  }
+}
+
+// Entrada de likes/dislikes en la BD
+if(isset($_POST["likeThis"]) || isset($_POST["dislikeThis"])){
+  if(isset($_POST["likeThis"])){
+    $newLike = "TRUE";
+  } else if (isset($_POST["dislikeThis"])){
+    $newLike = "FALSE";
+  }
+
+  // Si ya había votado, se actualiza su gusto
+  if($didVote){
+    $newLikeResu = $con->query("UPDATE likes SET gusto = $newLike "
+    ."WHERE videos_idVideo = '"
+    .$con->real_escape_string($infoVideo["idVideo"])."' "
+    ."AND usuarios_nick = '"
+    .$con->real_escape_string($_SESSION["logedUser"]->getNick())."'");
+  // Si no, se inserta una nueva entrada    
+  } else {
+    $newLikeResu = $con->query("INSERT INTO likes (gusto, videos_idVideo, "
+    ."usuarios_nick) VALUES ($newLike, '"
+    .$con->real_escape_string($infoVideo["idVideo"])."', '"
+    .$con->real_escape_string($_SESSION["logedUser"]->getNick())."')");
+  }
+
+  // Recargar la página para evitar reenvío de formulario ?>
+  <script>
+    var url = window.location.href;
+    window.location.replace(url);
+  </script>
+<?php exit();
+}
+
+?>
 <script src="/ver/playerCode.js"></script>
 
 <div class="container video-container">
@@ -241,6 +298,43 @@ if(isset($_POST["newComment"]) && (trim($_POST["newComment"]) != "")
 </div>
 
 <hr>
+<!-- Modulo de likes/dislikes -->
+<div class="container comments-container">
+  <div class="row">
+    <div class="col-xs-12 text-center">
+      <div class="likesModule">
+        <span class="likesCount">
+          <i class="fa fa-thumbs-up text-success" aria-hidden="true"></i>
+          <?php echo $nLikes ?>
+        </span>
+        <span class="dislikesCount">
+          <i class="fa fa-thumbs-down text-danger" aria-hidden="true"></i>
+          <?php echo $nDislikes ?>
+        </span>
+        <?php if(isset($_SESSION["isLoged"]) && $_SESSION["isLoged"]){ ?>
+          <div class="voteButtons">
+            <form id="likeForm" method="POST"
+            action=<?php echo "/ver?video=".$infoVideo["idVideo"] ?>>
+              <?php if($didVote && $voted == 1){ ?>
+                <button class="btn btn-default btn-success" disabled>Te gusta</button>
+              <?php }else{ ?>
+                <input type="submit" name="likeThis" id="likeThis"
+                class="btn btn-default btn-success" value="Me gusta">
+              <?php }
+              if($didVote && $voted == 0){ ?>
+                <button class="btn btn-default btn-danger" disabled>No te gusta</button>
+              <?php }else{ ?>
+                <input type="submit" name="dislikeThis" id="dislikeThis"
+                class="btn btn-default btn-danger" value="No me gusta">
+              <?php } ?>
+            </form>
+          </div>
+        <?php } ?>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- Módulo de comentarios -->
 <div class="container comments-container">
   <div class="row">
