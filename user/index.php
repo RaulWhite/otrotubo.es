@@ -55,7 +55,7 @@ if(isset($_SESSION["isLoged"]) && $_SESSION["isLoged"]
   if($editProfileResu){
     $nickParsed = $con->real_escape_string($_SESSION["logedUser"]->getNick());
     $loginResu = $con->query(
-      "SELECT `nick`, `email`, `nombre`, `avatar`, `bio`, `fechaRegistro`, `tipo`
+      "SELECT `nick`, `email`, `nombre`, `avatar`, `bio`, `fechaRegistro`
       FROM `usuarios`
       WHERE `nick` = '$nickParsed' OR email = '$nickParsed'"
     );
@@ -67,7 +67,6 @@ if(isset($_SESSION["isLoged"]) && $_SESSION["isLoged"]
       $actual->setAvatar($fila[3]);
       $actual->setBio(htmlentities($fila[4]));
       $actual->setFechaReg($fila[5]);
-      $actual->setTipo($fila[6]);
       $_SESSION['logedUser'] = $actual;
     }
   }

@@ -55,7 +55,7 @@ function login(){ // Función para hacer el login
 function setLogedUserObject($con, $nickParsed){ // Función para crear el objeto de usuario
   if(!isset($_SESSION['logedUser'])){
     $resu = $con->query(
-      "SELECT `nick`, `email`, `nombre`, `avatar`, `bio`, `fechaRegistro`, `tipo`
+      "SELECT `nick`, `email`, `nombre`, `avatar`, `bio`, `fechaRegistro`
       FROM `usuarios`
       WHERE `nick` = '$nickParsed' OR email = '$nickParsed'"
     );
